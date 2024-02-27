@@ -1,3 +1,6 @@
+from typing import List, Tuple
+
+
 class Board:
     def __init__(self, triangle_size: int = 3):
         self.triangle_size = triangle_size
@@ -12,8 +15,17 @@ class Board:
                     self.board[self.board_size - 1 - i][j] = 1
                     self.board[i][self.board_size - 1 - j] = 2
 
-    def print_diamond(self):
-        return '\n'.join('\t'.join(str(x) for x in row) for row in self.board)
+    def move(self, initial_pos: Tuple[int, int], path: List[Tuple[int, int]]):
+        current_x, current_y = initial_pos
+        for coordinates in path:
+            x, y = coordinates
+
+            if x < 0 or x > self.board_size - 1 or y < 0 or y > self.board_size:
+                raise Exception(f'Coordinates out of bound: {coordinates}')
+
+            self.board[x][y] = self.board[current_x][current_y]
+            self.board[current_x][current_y] = 0
+            current_x, current_y = x, y
 
     def __str__(self):
-        return '\n'.join('\t'.join(str(x) for x in row) for row in self.board)
+        return '\n'.join('\t'.join(str(x) if x else '.' for x in row) for row in self.board)
