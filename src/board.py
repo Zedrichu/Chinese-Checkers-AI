@@ -11,8 +11,12 @@ class Board:
     def init_board(self):
         for i in range(self.triangle_size):
             for j in range(self.triangle_size):
-                if j < self.board_size - self.triangle_size - i - 1:
+                # Define small triangular matrix function
+                #   with dimensions triangle_size • triangle_size
+                if j + i < self.triangle_size:
+                    # Translate triangular matrix bottom-left corner
                     self.board[self.board_size - 1 - i][j] = 1
+                    # Translate triangular matrix top-right corner
                     self.board[i][self.board_size - 1 - j] = 2
 
     def move(self, initial_pos: Tuple[int, int], path: List[Tuple[int, int]]):
