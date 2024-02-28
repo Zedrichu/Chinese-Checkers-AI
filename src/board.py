@@ -1,8 +1,8 @@
-from typing import List, Tuple
-
+from typing import Tuple, List
+import pygame
 
 class Board:
-    def __init__(self, triangle_size: int = 3):
+    def __init__(self, triangle_size: int):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.board = [[0] * self.board_size for _ in range(self.board_size)]
@@ -30,6 +30,17 @@ class Board:
             self.board[x][y] = self.board[current_x][current_y]
             self.board[current_x][current_y] = 0
             current_x, current_y = x, y
+
+    # Method to draw circles for each tile in a diamond shape
+    def draw_diamond(self, screen):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if self.board[i][j] == 1:
+                    pygame.draw.circle(screen, (0, 0, 255), (j * 50 + 25, i * 50 + 25), 20)
+                elif self.board[i][j] == 0:
+                    pygame.draw.circle(screen, (0, 0, 0), (j * 50 + 25, i * 50 + 25), 20)
+                elif self.board[i][j] == 2:
+                    pygame.draw.circle(screen, (255, 0, 0), (j * 50 + 25, i * 50 + 25), 20)
 
     def __str__(self):
         return '\n'.join('\t'.join(str(x) if x else '.' for x in row) for row in self.board)
