@@ -52,6 +52,9 @@ while True:
         # color the outline of circles if mouse is hovering over them
         if ev.type == pygame.MOUSEMOTION:
             gameController.hover(mouse,screen)
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            gameController.click(mouse,screen)
+
 
          
 
