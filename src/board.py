@@ -1,12 +1,24 @@
 from typing import Tuple, List
+import numpy as np
 import pygame
 
 class Board:
     def __init__(self, triangle_size: int):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
-        self.board = [[0] * self.board_size for _ in range(self.board_size)]
+        self.board = np.zeros((self.board_size, self.board_size))
         self.init_board()
+
+    def is_cornered(self):
+
+        for i in range(self.triangle_size):
+            for j in range(self.triangle_size):
+                if j + i < self.triangle_size:
+                    # Translate triangular matrix bottom-left corner
+                    self.board[self.board_size - 1 - i][j] = 1
+                    # Translate triangular matrix top-right corner
+                    self.board[i][self.board_size - 1 - j] = 2
+        return True
 
     def init_board(self):
         for i in range(self.triangle_size):
@@ -41,6 +53,8 @@ class Board:
                     pygame.draw.circle(screen, (0, 0, 0), (j * 50 + 25, i * 50 + 25), 20)
                 elif self.board[i][j] == 2:
                     pygame.draw.circle(screen, (255, 0, 0), (j * 50 + 25, i * 50 + 25), 20)
+
+
 
     def __str__(self):
         return '\n'.join('\t'.join(str(x) if x else '.' for x in row) for row in self.board)

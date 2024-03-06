@@ -1,5 +1,8 @@
 from src.player import Player
 import pygame
+from State import State
+from GameProblem import Step
+
 
 # Class to control the game
 # TODO: Refactor the code to make it more readable, proof of concept
@@ -20,17 +23,19 @@ class GameController:
         screen.blit(text, (270, screen.get_height()-40))
 
     # Method to handle mouse click event to select a tile of player's turn
-    # TODO: Very bad code, needs to be refactored. But selecting and moving tiles is working
-    def click(self, mouse, screen):
-        print("Test")
+    # TODO: Very bad code, needs to be refactored. But selecting and moving tiles is working, no game logic yet
+    def click(self, mouse):
+        #print("Test")
         for i in range(self.board.board_size):
             for j in range(self.board.board_size):
                 if (j * 50 + 25 - 20 < mouse[0] < j * 50 + 25 + 20) and (i * 50 + 25 - 20 < mouse[1] < i * 50 + 25 + 20):
-                    print(str(self.players[self.turn].player_id))
+                    #print(str(self.players[self.turn].player_id))
+
                     if self.board.board[i][j] == self.turn:
+                        player = self.players[self.turn]
                         # Player selects his own tile as first part of the move
                         self.players[self.turn].select_own_tile(i, j)
-                    if self.board.board[i][j] == 0 and self.players[self.turn].selected_tile != None:
+                    if self.board.board[i][j] == 0 and self.players[self.turn].selected_tile is not None:
                         # Player selects an empty tile as second part of the move
                         self.players[self.turn].select_target_tile(i, j)
                         # If the move is valid, update the board and change the turn
@@ -38,20 +43,34 @@ class GameController:
                         target = self.players[self.turn].target_tile
                         
                         # if both selected and target tiles are not None
-                        if target != None and selected != None:
-                            # change the values of target and selected tiles
-                            self.board.board[target[0]][target[1]] = self.turn
-                            self.board.board[selected[0]][selected[1]] = 0                        
+                        if target is not None and selected is not None:
+                            x1, y1 = selected
+                            x2, y2 = target
+
+                            if abs(x1-x2 + y1 - y2) > 1:
+                                valid = Step.validate_jump(
+                                    State(self.board.board, 1),
+                                    (selected[0], selected[1]),
+                                    (target[0], target[1])
+                                )
+                            else:
+                                valid = Step.validate_move(
+                                    State(self.board.board, 1),
+                                    (selected[0], selected[1]),
+                                    (target[0], target[1])
+                                )
+                            if valid:
+                                # change the values of target and selected tiles
+                                self.board.board[target[0]][target[1]] = self.turn
+                                self.board.board[selected[0]][selected[1]] = 0
+
+                                # Reset players
+                                self.players[self.turn].reset_selected()
+
 
 
 
                             return
-
-                        
-
-        
-                    
-                        
 
     def hover(self, mouse,screen):
         for i in range(self.board.board_size):

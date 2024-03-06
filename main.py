@@ -33,9 +33,7 @@ height = screen.get_height()
 board = Board(3)
 gameController = GameController(board)
 
-
-
-clicked = False
+# Pygame loop
 while True: 
     
     for ev in pygame.event.get(): 
@@ -53,7 +51,7 @@ while True:
         if ev.type == pygame.MOUSEMOTION:
             gameController.hover(mouse,screen)
         if ev.type == pygame.MOUSEBUTTONDOWN:
-            gameController.click(mouse,screen)
+            gameController.click(mouse)
 
 
          
