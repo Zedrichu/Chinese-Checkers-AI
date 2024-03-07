@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from board import Board
+from Board import Board
 
 
 @dataclass

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Tuple
 
 from State import State
-from board import Board
+from Board import Board
 
 
 class GameProblem:
@@ -21,12 +21,14 @@ class GameProblem:
         raise NotImplementedError
 
     def terminal_test(self, state):
-        return state.board.is_cornered()
+        player1 = state.board.is_cornered('top', 1)
+        player2 = state.board.is_cornered('bottom', 2)
+        return player1 or player2
 
     def path_cost(self, c, state1, action, state2):
         return c + 1
 
-    def cuoff_test(self, state):
+    def cutoff_test(self, state):
         raise NotImplementedError
 
     def utility(self, player, state):
