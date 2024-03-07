@@ -1,12 +1,27 @@
-from typing import List, Tuple
+from typing import Tuple, List
+import numpy as np
+import pygame
 
 
 class Board:
-    def __init__(self, triangle_size: int = 3):
+    def __init__(self, triangle_size: int):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
-        self.board = [[0] * self.board_size for _ in range(self.board_size)]
+        self.board = np.zeros((self.board_size, self.board_size), dtype=int)
         self.init_board()
+
+    def is_cornered(self, corner: str, value: int) -> bool:
+        if corner == 'top':
+            check_condition = lambda i, j: self.board[i][self.board_size - 1 - j] != value
+        else: # corner == 'bottom'
+            check_condition = lambda i, j: self.board[self.board_size - 1 - i][j] != value
+
+        for i in range(self.triangle_size):
+            for j in range(self.triangle_size):
+                if j + i < self.triangle_size:
+                    if check_condition(i, j):
+                        return False
+        return True
 
     def init_board(self):
         for i in range(self.triangle_size):
