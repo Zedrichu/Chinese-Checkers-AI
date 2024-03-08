@@ -1,4 +1,4 @@
-from src.player import Player
+
 import pygame
 from State import State
 from GameProblem import Step
