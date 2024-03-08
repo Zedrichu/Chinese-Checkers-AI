@@ -7,3 +7,4 @@ class State:
     board: Board
     player: int
     mode: int
+    peg: tuple

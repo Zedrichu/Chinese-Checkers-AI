@@ -34,17 +34,16 @@ class Board:
                     # Translate triangular matrix top-right corner
                     self.matrix[i][self.board_size - 1 - j] = 2
 
-    def move(self, initial_pos: Tuple[int, int], path: List[Tuple[int, int]]):
+    def move(self, initial_pos: Tuple[int, int], path: Tuple[int, int]):
         current_x, current_y = initial_pos
-        for coordinates in path:
-            x, y = coordinates
+        x, y = path
 
-            if x < 0 or x > self.board_size - 1 or y < 0 or y > self.board_size:
-                raise Exception(f'Coordinates out of bound: {coordinates}')
+        if x < 0 or x > self.board_size - 1 or y < 0 or y > self.board_size:
+            raise Exception(f'Coordinates out of bound: {path}')
 
-            self.matrix[x][y] = self.matrix[current_x][current_y]
-            self.matrix[current_x][current_y] = 0
-            current_x, current_y = x, y
+        tmp = self.matrix[x][y]
+        self.matrix[x][y] = self.matrix[current_x][current_y]
+        self.matrix[current_x][current_y] = tmp
 
     def within_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.board_size and 0 <= y < self.board_size
