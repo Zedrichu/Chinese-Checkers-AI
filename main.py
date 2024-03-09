@@ -1,6 +1,7 @@
 from src.gameController import GameController
 from src.Board import Board
 from src.Graphics import Graphics
+from src.GameProblem import Action
 import pygame as pg
 import sys 
   
@@ -36,6 +37,8 @@ board = Board(3)
 gameController = GameController(board)
 
 gui = Graphics(board)
+
+#print(Action.generate_peg_actions(board, (6, 2)))
 
 # Pygame loop
 while True: 
