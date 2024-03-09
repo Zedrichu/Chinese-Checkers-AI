@@ -7,7 +7,7 @@ import sys
   
   
 # initializing the constructor 
-pygame.init() 
+pg.init() 
   
 # screen resolution 
 res = (720,720) 
@@ -16,7 +16,7 @@ res = (720,720)
 img = pg.image.load('src/img/wood.jpg')
 
 # opens up a window 
-screen = pygame.display.set_mode(res) 
+screen = pg.display.set_mode(res) 
   
 # white color 
 color = (255,255,255) 
@@ -44,7 +44,7 @@ gui = Graphics(board, screen)
 clicked = False
 while True: 
     
-    for ev in pygame.event.get(): 
+    for ev in pg.event.get(): 
         # fill the screen with white color
         screen.blit(img, (0, 0))
         mouse = pg.mouse.get_pos()
@@ -71,4 +71,4 @@ while True:
     #screen.blit(text , (width/2+50,height/2)) 
       
     # updates the frames of the game 
-    pygame.display.update() 
+    pg.display.update() 
