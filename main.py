@@ -43,24 +43,24 @@ gui = Graphics(board, screen)
 
 # Pygame loop
 while True:
-
     for ev in pg.event.get():
         # fill the screen with white color
         screen.blit(img, (0, 0))
         mouse = pg.mouse.get_pos()
+
         if ev.type == pg.QUIT:
             pg.quit()
 
         # Draw small circles for each tile
-        gui.draw_diamond_board(screen)
-        gui.draw_turn(gameController.turn, screen)
-        gui.draw_end_turn(screen)
+        gui.draw_diamond_board(gameController)
+        gui.draw_current_player_turn(gameController.turn)
+        gui.draw_end_turn_button(mouse)
 
         # color the outline of circles if mouse is hovering over them
         if ev.type == pg.MOUSEMOTION:
-            gui.hover(mouse, gameController.turn, screen)
+            gui.hover(mouse, gameController)
         if ev.type == pg.MOUSEBUTTONDOWN:
-            gui.click(mouse, gameController.turn)
+            gui.click(mouse, gameController)
             gui.click_button(mouse, gameController)
 
     # superimposing the text onto our button
