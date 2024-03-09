@@ -83,7 +83,7 @@ class Graphics:
         peg = self.start_tile
         if peg is not None:
             self.highlight_peg(peg, game.turn)
-            self.highlight_possible_moves(peg, game.turn)
+            self.highlight_possible_moves(peg)
 
     # Draw the turn rectangle with text
     def draw_current_player_turn(self, turn: int):
@@ -110,13 +110,12 @@ class Graphics:
         pg.draw.circle(self.screen, pg.Color('green'),
                        (self.start_tile[1] * 50 + 25, self.start_tile[0] * 50 + 25),22, 5)
 
-    def highlight_possible_moves(self, src: tuple, turn: int):
+    def highlight_possible_moves(self, src: tuple):
         x, y = src[0], src[1]
-
         for move_coords in np.ndindex(self.board.matrix.shape):
             if Step.validate_step(self.board, (x, y), move_coords):
-                pg.draw.circle(self.screen, pg.Color('white'), (move_coords[1] * 50 + 25, move_coords[0] * 50 + 25),
-                               CIRCLE_RADIUS, 5)
+                pg.draw.circle(self.screen, pg.Color('white'),
+                               (move_coords[1] * 50 + 25, move_coords[0] * 50 + 25),CIRCLE_RADIUS, 5)
 
     def click(self, mouse, game):
         pair = find_circle(mouse)
