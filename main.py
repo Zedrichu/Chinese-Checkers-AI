@@ -1,23 +1,22 @@
-from src.GameController import GameController
-from src.Board import Board
-from src.Graphics import Graphics
-from src.GameProblem import Action
 import pygame as pg
-import sys 
-  
-  
+
+from Board import Board
+from GameController import GameController
+from Graphics import Graphics
+
 # initializing the constructor 
-pg.init() 
-  
+pg.init()
+
 # screen resolution 
 res = (720,720) 
   
 # Load of board background img
 img = pg.image.load('src/img/wood.jpg')
 
-# opens up a window 
-screen = pg.display.set_mode(res) 
-  
+# opens up a window
+screen = pg.display.set_mode(res)
+pg.display.set_caption('Chinese Checkers')
+
 # white color 
 color = (255,255,255) 
   
@@ -40,11 +39,12 @@ gameController = GameController(board)
 
 gui = Graphics(board, screen)
 
+#print(Action.generate_peg_actions(board, (6, 2)))
 
-clicked = False
+# Pygame loop
 while True: 
     
-    for ev in pg.event.get(): 
+    for ev in pg.event.get():
         # fill the screen with white color
         screen.blit(img, (0, 0))
         mouse = pg.mouse.get_pos()
@@ -64,11 +64,8 @@ while True:
             gui.click_button(mouse, gameController)
 
 
-         
-
-        
     # superimposing the text onto our button 
     #screen.blit(text , (width/2+50,height/2)) 
       
     # updates the frames of the game 
-    pg.display.update() 
+    pg.display.update()

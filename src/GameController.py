@@ -1,8 +1,3 @@
-from src.player import Player
-import pygame
-from src.GameProblem import Step
-
-
 # Class to control the game
 # TODO: Refactor the code to make it more readable, proof of concept
 class GameController:

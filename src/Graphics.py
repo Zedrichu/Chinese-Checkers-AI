@@ -1,6 +1,6 @@
 import pygame as pg
+
 from src.GameProblem import Step
-from src.State import State
 
 CIRCLE_RADIUS = 20
 TILE_SIZE = 50
