@@ -5,25 +5,44 @@ import numpy as np
 
 
 class Board:
-    def __init__(self, triangle_size: int):
+    def __init__(self, triangle_size: int, initialised=True):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-        self.init_board()
+
+        if initialised:
+            self.init_board()
 
     def init_board(self):
         for i in range(self.triangle_size):
             for j in range(self.triangle_size):
                 if j + i < self.triangle_size:
                     # Translate triangular matrix bottom-left corner
-                    self.matrix[self.board_size - 1 - i][j] = 1
+                    self.place_peg(0, (self.board_size - 1 - i, j))
                     # Translate triangular matrix top-right corner
-                    self.matrix[i][self.board_size - 1 - j] = 2
+                    self.place_peg(1, (i, self.board_size - 1 - j))
 
     def move(self, src: Tuple[int, int], dest: Tuple[int, int]):
         tmp = self.matrix[src]
         self.matrix[src] = 0
         self.matrix[dest] = tmp
+
+    def place_peg(self, player_id: int, dest: Tuple[int, int]):
+        self.matrix[dest] = player_id + 1
+
+    def place_pegs(self, player_id: int, destinations: Iterable[Tuple[int, int]]):
+        for dest in destinations:
+            self.place_peg(player_id, dest)
+
+    def is_bound(self, coordinate: Tuple[int, int]) -> bool:
+        """
+        Verify if the coordinate is within the limits of the board.
+        """
+        if coordinate[0] < 0 or coordinate[0] >= self.board_size:
+            return False
+        if coordinate[1] < 0 or coordinate[1] >= self.board_size:
+            return False
+        return True
 
     @cached_property
     def _top_corner_coordinates(self) -> Iterable[Tuple[int, int]]:

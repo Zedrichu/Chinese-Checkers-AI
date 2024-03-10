@@ -9,7 +9,7 @@ from by_book.State import State
 def main():
     players = [KeyboardHumanPlayer(), NonRepeatingRandomPlayer()]
 
-    board = Board(triangle_size=1)
+    board = Board(triangle_size=2)
     initial_state = State(board=board, player_to_move=0)
     problem = ChineseCheckersGameProblem(initial_state=initial_state, players_count=len(players))
 

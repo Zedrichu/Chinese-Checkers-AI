@@ -5,6 +5,7 @@ from typing import Iterable, List, Tuple
 
 from by_book.Action import Action
 from by_book.State import State
+from by_book.chinese_toolbox import list_adjacent_cells
 
 
 class GameProblem(ABC):
@@ -55,26 +56,65 @@ class ChineseCheckersGameProblem(GameProblem):
         return state.player_to_move
 
     @staticmethod
-    def _find_all_moves_for_position(state: State, src: Tuple[int, int]) -> Iterable[Action]:
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                new_position = (src[0] + i, src[1] + j)
-                y_is_out_of_bounds = new_position[0] < 0 or new_position[0] >= state.board.board_size
-                x_is_out_of_bounds = new_position[1] < 0 or new_position[1] >= state.board.board_size
-                if y_is_out_of_bounds or x_is_out_of_bounds:
-                    continue
+    def _find_crawl_moves(state: State, src: Tuple[int, int]) -> Iterable[Action]:
+        """
+        Find the moves to adjacent non-occupied cells.
+        """
+        for position in list_adjacent_cells(state.board, src):
+            if state.board.matrix[position] == 0:
+                yield Action(steps=[src, position])
 
-                position_is_occupied = state.board.matrix[new_position] != 0
-                if position_is_occupied:
-                    continue
+    @staticmethod
+    def _find_jump_moves(state: State, path: List[Tuple[int, int]]) -> Iterable[Action]:
+        """
+        For a given path of positions, recursively find all possible jumps, stopping when a jump lands inside the path.
+        To start, use path=[initial_position].
+        """
+        src = path[-1]
+        for pos in list_adjacent_cells(state.board, src):
+            if state.board.matrix[pos] == 0:
+                continue
 
-                yield Action(steps=[src, new_position])
+            landing = None
+            if pos[0] + 1 == src[0] and pos[1] == src[1]:
+                # Up jump
+                landing = src[0] - 2, src[1]
+            elif pos[0] + 1 == src[0] and pos[1] - 1 == src[1]:
+                # Diagonal up jump
+                landing = src[0] - 2, src[1] + 2
+            elif pos[0] == src[0] and pos[1] - 1 == src[1]:
+                # Right jump
+                landing = src[0], src[1] + 2
+            elif pos[0] - 1 == src[0] and pos[1] == src[1]:
+                # Down jump
+                landing = src[0] + 2, src[1]
+            elif pos[0] - 1 == src[0] and pos[1] + 1 == src[1]:
+                # Diagonal down jump
+                landing = src[0] + 2, src[1] - 2
+            elif pos[0] == src[0] and pos[1] + 1 == src[1]:
+                # Left jump
+                landing = src[0], src[1] - 2
+
+            if landing is None:
+                continue
+
+            if not state.board.is_bound(landing) or state.board.matrix[landing] != 0:
+                continue
+
+            # Invalidate if it enters a loop
+            if landing in path:
+                continue
+
+            new_path = [*path, landing]
+            yield Action(new_path)
+            yield from ChineseCheckersGameProblem._find_jump_moves(state, new_path)
 
     def actions(self, state: State) -> Iterable[Action]:
         for i in range(state.board.board_size):
             for j in range(state.board.board_size):
                 if state.board.matrix[i][j] == state.player_to_move + 1:
-                    yield from self._find_all_moves_for_position(state, (i, j))
+                    yield from self._find_crawl_moves(state, (i, j))
+                    yield from self._find_jump_moves(state, [(i, j)])
 
     def result(self, state: State, move: Action) -> State:
         initial_position = move.steps[0]
