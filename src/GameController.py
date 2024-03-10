@@ -1,7 +1,5 @@
-
 import pygame
-from State import State
-from GameProblem import Step
+from src.GameProblem import Step
 
 
 # Class to control the game
@@ -11,3 +9,6 @@ class GameController:
         self.turn = 1
         self.board = board
         # self.players = [Player(i) for i in range(1,3)]
+
+    def end_turn(self):
+        self.turn = self.turn % 2 + 1

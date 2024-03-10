@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Tuple, List
 
-from State import State
-from Board import Board
+from src.State import State
+from src.Board import Board
 
 
 class Step:
