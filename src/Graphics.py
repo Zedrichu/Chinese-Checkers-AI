@@ -166,5 +166,3 @@ class Graphics:
             # draw cross if tile is not owned by any player
             pg.draw.line(screen, pg.Color('white'), (j * 50 + 5, i * 50 + 5), (j * 50 + 45, i * 50 + 45), 5)
             pg.draw.line(screen, pg.Color('white'), (j * 50 + 45, i * 50 + 5), (j * 50 + 5, i * 50 + 45), 5)
-        
-
