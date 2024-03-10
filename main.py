@@ -1,7 +1,7 @@
 from src.GameController import GameController
 from src.Board import Board
 from src.Graphics import Graphics
-from src.GameProblem import Action
+from src.ChineseCheckers import Action
 import pygame as pg
 import sys 
   

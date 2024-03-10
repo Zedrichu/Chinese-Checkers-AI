@@ -1,5 +1,5 @@
 import pygame
-from src.GameProblem import Step
+from src.ChineseCheckers import Step
 
 
 # Class to control the game
