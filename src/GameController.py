@@ -1,4 +1,3 @@
-from src.player import Player
 import pygame
 from src.GameProblem import Step
 
