@@ -87,9 +87,9 @@ class ChineseCheckersGameProblemTests(unittest.TestCase):
         """
            0  1  2  3  4
         0  .  .  .  .  .
-        1  .  .  x  x  .
+        1  .  x  x  .  .
         2  .  x  1  x  .
-        3  .  x  x  .  .
+        3  .  .  x  x  .
         4  .  .  .  .  .
         """
         board = Board(triangle_size=2, initialised=False)
@@ -99,73 +99,73 @@ class ChineseCheckersGameProblemTests(unittest.TestCase):
 
         actions = list(sut.actions(state))
 
+        self.assertIn(Action([(2, 2), (1, 1)]), actions)
         self.assertIn(Action([(2, 2), (1, 2)]), actions)
-        self.assertIn(Action([(2, 2), (1, 3)]), actions)
-        self.assertIn(Action([(2, 2), (2, 3)]), actions)
         self.assertIn(Action([(2, 2), (2, 1)]), actions)
-        self.assertIn(Action([(2, 2), (3, 1)]), actions)
+        self.assertIn(Action([(2, 2), (2, 3)]), actions)
         self.assertIn(Action([(2, 2), (3, 2)]), actions)
+        self.assertIn(Action([(2, 2), (3, 3)]), actions)
         self.assertEqual(len(actions), 6)
 
     def test_actions_should_detect_moves_to_adjacent_cells_when_the_cells_are_empty(self):
         """
            0  1  2  3  4
         0  .  .  .  .  .
-        1  .  .  x  1  .
+        1  .  1  x  .  .
         2  .  x  1  x  .
-        3  .  x  x  .  .
+        3  .  .  x  x  .
         4  .  .  .  .  .
         """
         board = Board(triangle_size=2, initialised=False)
         board.place_peg(player_id=0, dest=(2, 2))
-        board.place_peg(player_id=0, dest=(1, 3))
+        board.place_peg(player_id=0, dest=(1, 1))
         state = State(board)
         sut = ChineseCheckersGameProblem(initial_state=state)
 
         actions = list(sut.actions(state))
 
         # Verify that there is no move into an occupied cell
-        self.assertNotIn(Action([(2, 2), (1, 3)]), actions)
+        self.assertNotIn(Action([(2, 2), (1, 1)]), actions)
 
     def test_actions_should_detect_small_jumps(self):
         """
            0  1  2  3  4
-        0  .  .  x  .  x
-        1  .  .  2  2  .
+        0  x  .  x  .  .
+        1  .  2  2  .  .
         2  x  2  1  2  x
-        3  .  2  2  .  .
-        4  x  .  x  .  .
+        3  .  .  2  2  .
+        4  .  .  x  .  x
         """
         board = Board(triangle_size=2, initialised=False)
         board.place_peg(0, (2, 2))
-        board.place_pegs(1, [(1, 2), (1, 3), (2, 1), (2, 3), (3, 1), (3, 2)])
+        board.place_pegs(1, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
         state = State(board)
         sut = ChineseCheckersGameProblem(initial_state=state)
 
         actions = list(sut.actions(state))
 
+        self.assertIn(Action([(2, 2), (0, 0)]), actions)
         self.assertIn(Action([(2, 2), (0, 2)]), actions)
-        self.assertIn(Action([(2, 2), (0, 4)]), actions)
+        self.assertIn(Action([(2, 2), (2, 0)]), actions)
         self.assertIn(Action([(2, 2), (2, 4)]), actions)
         self.assertIn(Action([(2, 2), (4, 2)]), actions)
-        self.assertIn(Action([(2, 2), (4, 0)]), actions)
-        self.assertIn(Action([(2, 2), (2, 0)]), actions)
+        self.assertIn(Action([(2, 2), (4, 4)]), actions)
         self.assertEqual(len(actions), 6)
 
     def test_actions_should_detect_non_looping_jumps(self):
         """
            0  1  2  3  4  5  6
         0  .  .  .  .  .  .  .
-        1  .  .  .  x  2  x  .
-        2  .  .  2  2  .  2  .
+        1  .  x  2  x  2  x  .
+        2  .  2  .  2  .  2  .
         3  .  x  .  1  .  x  .
-        4  .  2  .  .  2  .  .
-        5  .  x  2  x  .  .  .
+        4  .  2  .  .  .  2  .
+        5  .  x  2  x  2  x  .
         6  .  .  .  .  .  .  .
         """
         board = Board(triangle_size=3, initialised=False)
         board.place_peg(0, (3, 3))
-        board.place_pegs(1, [(2, 3), (2, 2), (4, 1), (5, 2), (4, 4), (2, 5), (1, 4)])
+        board.place_pegs(1, [(1, 2), (1, 4), (2, 1), (2, 3), (2, 5), (4, 1), (4, 5), (5, 2), (5, 4)])
         state = State(board)
         sut = ChineseCheckersGameProblem(initial_state=state)
 
@@ -176,19 +176,23 @@ class ChineseCheckersGameProblemTests(unittest.TestCase):
         # Clockwise starting at (1, 3)
         self.assertIn(Action([(3, 3), (1, 3), (1, 5)]), actions)
         self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 3)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 3), (5, 1)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 3), (5, 1), (3, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 5)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 5), (5, 3)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 5), (5, 3), (5, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 5), (5, 3), (5, 1), (3, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 5), (3, 5), (5, 5), (5, 3), (5, 1), (3, 1), (1, 1)]), actions)
 
         # Anticlockwise starting at (1, 3)
-        self.assertIn(Action([(3, 3), (1, 3), (3, 1)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (3, 1), (5, 1)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (3, 1), (5, 1), (5, 3)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (3, 1), (5, 1), (5, 3), (3, 5)]), actions)
-        self.assertIn(Action([(3, 3), (1, 3), (3, 1), (5, 1), (5, 3), (3, 5), (1, 5)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1), (5, 1)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1), (5, 1), (5, 3)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1), (5, 1), (5, 3), (5, 5)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1), (5, 1), (5, 3), (5, 5), (3, 5)]), actions)
+        self.assertIn(Action([(3, 3), (1, 3), (1, 1), (3, 1), (5, 1), (5, 3), (5, 5), (3, 5), (1, 5)]), actions)
 
-        # 11 jumps and 5 crawls
-        self.assertEqual(len(actions), 11 + 5)
+        # 15 jumps and 5 crawls
+        self.assertEqual(len(actions), 15 + 5)
 
 
 if __name__ == '__main__':

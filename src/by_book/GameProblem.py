@@ -76,22 +76,22 @@ class ChineseCheckersGameProblem(GameProblem):
                 continue
 
             landing = None
-            if pos[0] + 1 == src[0] and pos[1] == src[1]:
+            if src[0] - 1 == pos[0] and src[1] - 1 == pos[1]:
+                # Diagonal up jump
+                landing = src[0] - 2, src[0] - 2
+            elif src[0] - 1 == pos[0] and src[1] == pos[1]:
                 # Up jump
                 landing = src[0] - 2, src[1]
-            elif pos[0] + 1 == src[0] and pos[1] - 1 == src[1]:
-                # Diagonal up jump
-                landing = src[0] - 2, src[1] + 2
-            elif pos[0] == src[0] and pos[1] - 1 == src[1]:
+            elif src[0] == pos[0] and src[1] + 1 == pos[1]:
                 # Right jump
                 landing = src[0], src[1] + 2
-            elif pos[0] - 1 == src[0] and pos[1] == src[1]:
+            elif src[0] + 1 == pos[0] and src[1] + 1 == pos[1]:
+                # Diagonal down jump
+                landing = src[0] + 2, src[1] + 2
+            elif src[0] + 1 == pos[0] and src[1] == pos[1]:
                 # Down jump
                 landing = src[0] + 2, src[1]
-            elif pos[0] - 1 == src[0] and pos[1] + 1 == src[1]:
-                # Diagonal down jump
-                landing = src[0] + 2, src[1] - 2
-            elif pos[0] == src[0] and pos[1] + 1 == src[1]:
+            elif src[0] == pos[0] and src[1] - 1 == pos[1]:
                 # Left jump
                 landing = src[0], src[1] - 2
 

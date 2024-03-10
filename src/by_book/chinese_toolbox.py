@@ -16,7 +16,7 @@ def list_adjacent_cells(board: Board, target: Tuple[int, int]) -> Iterable[Tuple
     """
     for i in range(-1, 2):
         for j in range(-1, 2):
-            if i == -1 and j == -1 or i == 1 and j == 1:
+            if i == -1 and j == 1 or i == 1 and j == -1:
                 continue
 
             coordinate = target[0] + i, target[1] + j
