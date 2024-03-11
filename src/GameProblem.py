@@ -1,25 +1,22 @@
-class GameProblem:
+from functools import cached_property
 
-    @property
+
+class GameProblem:
+    @cached_property
     def initial_state(self):
         raise NotImplementedError
 
-    @staticmethod
-    def player(state):
+    def player(self, state):
         raise NotImplementedError
 
-    @staticmethod
-    def actions(state):
+    def actions(self, state):
         raise NotImplementedError
 
-    @staticmethod
-    def result(state, action):
+    def result(self, state, action):
         raise NotImplementedError
 
-    @staticmethod
-    def terminal_test(state):
+    def terminal_test(self, state):
         raise NotImplementedError
 
-    @staticmethod
-    def utility(state, player: int):
+    def utility(self, state, player):
         raise NotImplementedError
