@@ -26,10 +26,10 @@ class ChineseCheckers(GameProblem):
                     res = None
 
                     if state.mode == Step.JUMP and src == state.peg:
-                        res = Step.validate_jump(board, src, (src[0] + i, src[1] + j))
+                        res = Step.validate_tail(board, src, (src[0] + i, src[1] + j))
 
                     if state.mode == Step.END or state.mode == Step.CRAWL:
-                        res = Step.validate_step(board, src, (src[0] + i, src[1] + j))
+                        res = Step.validate_head(board, src, (src[0] + i, src[1] + j))
 
                     if res is not None:
                         yield Action(src, (src[0] + i, src[1] + j), res)
@@ -72,8 +72,9 @@ class ChineseCheckers(GameProblem):
 
 
 if __name__ == "__main__":
-    new = ChineseCheckers.initial_state
-    print(new)
-    for action in ChineseCheckers.actions(new):
-        print(action)
+    cc = ChineseCheckers()
+    init = cc.initial_state
+    print(init)
+    for act in cc.actions(init):
+        print(act)
     pass
