@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-
 import numpy as np
-
-from src.Board import Board
+from Board import Board
 
 
 @dataclass
