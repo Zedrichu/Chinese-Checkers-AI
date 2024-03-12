@@ -39,7 +39,7 @@ class ChineseCheckers(GameProblem):
         for i in range(board.board_size):
             for j in range(board.board_size):
                 if board.matrix[i][j] == state.player:
-                    yield from self.peg_actions(state, (i, j))
+                    yield from self._peg_actions(state, (i, j))
 
     def result(self, state: State, action: Action) -> State:
         new_board = state.board.copy()

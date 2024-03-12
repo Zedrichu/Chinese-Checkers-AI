@@ -128,7 +128,7 @@ class Graphics:
     def click(self, mouse, game):
         pair = find_circle(mouse)
 
-        if pair is None or not self.board.within_bounds(pair[0], pair[1]):
+        if pair is None or not self.board.within_bounds((pair[0], pair[1])):
             return
 
         i, j = pair
@@ -189,7 +189,7 @@ class Graphics:
     def hover(self, mouse, game):
         pair = find_circle(mouse)
 
-        if pair is None or not self.board.within_bounds(pair[0], pair[1]):
+        if pair is None or not self.board.within_bounds((pair[0], pair[1])):
             return
 
         i, j = pair
