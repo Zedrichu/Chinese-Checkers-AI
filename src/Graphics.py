@@ -1,6 +1,8 @@
 import numpy as np
 import pygame as pg
-from ChineseCheckers import Step, ChineseCheckers
+import ChineseCheckers
+
+from Board import Board
 from State import State
 
 CIRCLE_RADIUS = 20
@@ -46,10 +48,11 @@ def find_button(mouse):
 
 class Graphics:
 
-    def __init__(self, state: State):
+    def __init__(self):
+        self.pg = pg
         pg.init()
-        self.state = state
-        self.board = self.state.board
+        #self.state = state
+        #self.board = self.state.board
         self.img = pg.image.load('img/wood.jpg')
         self.screen = pg.display.set_mode((RESOLUTION, RESOLUTION))
         self.colors = ['blue', 'red']
@@ -58,36 +61,43 @@ class Graphics:
         pg.display.set_caption('Chinese Checkers')
 
     # Method to draw every aspect of the game
-    def draw_everything(self):
+    def draw_everything(self, state: State):
         self.screen.blit(self.img, (0, 0))
-        self.draw_diamond_board(self.board)
-        self.draw_current_player_turn(self.state.player)
+        self.draw_diamond_board(state.board)
+        self.draw_current_player_turn(state.player)
         self.draw_end_turn_button()
+        self.pg.display.update()
+
+    def handle_events(self):
+        for ev in self.pg.event.get():
+            if ev.type == self.pg.QUIT:
+                self.pg.display.quit()
+                self.pg.quit()
 
     # Method to draw circles for each tile in a diamond shape
-    def draw_diamond_board(self, game):
+    def draw_diamond_board(self, board: Board):
         # screen.fill((255, 255, 255))
-        for i in range(self.board.board_size):
-            for j in range(self.board.board_size):
+        for i in range(board.board_size):
+            for j in range(board.board_size):
                 # Blue
-                if self.board.matrix[i][j] == 1:
+                if board.matrix[i][j] == 1:
                     pg.draw.circle(self.screen, pg.Color(0, 0, 255),
                                    (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS)
 
                 # Black
-                elif self.board.matrix[i][j] == 0:
+                elif board.matrix[i][j] == 0:
                     pg.draw.circle(self.screen, pg.Color(0, 0, 0),
                                    (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS, width=4)
 
                 # Red
-                elif self.board.matrix[i][j] == 2:
+                elif board.matrix[i][j] == 2:
                     pg.draw.circle(self.screen, pg.Color(255, 0, 0),
                                    (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS)
 
         peg = self.start_tile
-        if peg is not None:
-            self.highlight_peg(peg, game.turn)
-            self.highlight_possible_moves(game.state)
+        #if peg is not None:
+        #    self.highlight_peg(peg, game.turn)
+        #    self.highlight_possible_moves(game.state)
 
     # Draw the turn rectangle with text
     def draw_current_player_turn(self, turn: int):
@@ -147,13 +157,13 @@ class Graphics:
                 x1, y1 = start
                 x2, y2 = target
                 if abs(x1 - x2) > 1 or abs(y1 - y2) > 1:
-                    valid = Step.validate_jump(
+                    valid = ChineseCheckers.Step.validate_jump(
                         self.board,
                         (start[0], start[1]),
                         (target[0], target[1])
                     )
                 else:
-                    valid = Step.validate_crawl(
+                    valid = ChineseCheckers.Step.validate_crawl(
                         self.board,
                         (start[0], start[1]),
                         (target[0], target[1])
