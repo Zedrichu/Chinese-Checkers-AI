@@ -1,6 +1,7 @@
-from typing import Tuple
-
+from typing import Tuple, List
 import numpy as np
+import pygame
+
 
 class Board:
     def __init__(self, triangle_size: int):
@@ -12,7 +13,7 @@ class Board:
     def is_cornered(self, corner: str, value: int) -> bool:
         if corner == 'top':
             check_condition = lambda i, j: self.matrix[i][self.board_size - 1 - j] != value
-        else: # corner == 'bottom'
+        else:  # corner == 'bottom'
             check_condition = lambda i, j: self.matrix[self.board_size - 1 - i][j] != value
 
         for i in range(self.triangle_size):

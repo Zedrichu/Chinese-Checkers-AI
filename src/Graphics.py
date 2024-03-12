@@ -18,6 +18,14 @@ turn_rect = pg.Rect((0, RESOLUTION - 50, 720, 50))
 end_turn_rect = pg.Rect(RESOLUTION - 150, RESOLUTION - 150, 120, 50)
 
 
+# Rectangles in which the game is split
+# 1. Game
+game_rect = pg.Rect(0, 0, RESOLUTION, RESOLUTION-50)
+# 2. Turn
+turn_rect = pg.Rect((0, RESOLUTION - 50, 720, 50))
+# 3. End-turn button
+end_turn_rect = pg.Rect(RESOLUTION-150, RESOLUTION-150, 120, 50)
+
 # Method to find the circle that the mouse is hovering over
 def find_circle(mouse):
     # Compute the tile position - swap mouse coordinates
@@ -32,7 +40,6 @@ def find_circle(mouse):
 
     return None
 
-
 # Method to find if the mouse is hovering over the end-turn button
 def find_button(mouse):
     x = mouse[0]
@@ -41,7 +48,7 @@ def find_button(mouse):
     # Verify that mouse is inside end-turn button
     if (end_turn_rect.left < x < end_turn_rect.right) and (end_turn_rect.top < y < end_turn_rect.bottom):
         return x, y
-
+    
     return None
 
 
@@ -56,6 +63,8 @@ class Graphics:
         self.target_tile = None
         self.game_container_res = [screen.get_width(), screen.get_height()]
 
+        self.game_container_res = [screen.get_width(), screen.get_height()]
+
     # Method to draw circles for each tile in a diamond shape
     def draw_diamond_board(self, game):
         # Background - use img
@@ -64,7 +73,6 @@ class Graphics:
         # screen.fill((255, 255, 255))
         for i in range(self.board.board_size):
             for j in range(self.board.board_size):
-
                 # Blue
                 if self.board.matrix[i][j] == 1:
                     pg.draw.circle(self.screen, pg.Color(0, 0, 255),
@@ -96,7 +104,6 @@ class Graphics:
         button_color = (171, 148, 126)
         if end_turn_rect.collidepoint(mouse):  # Check if mouse is hovering
             button_color = (111, 94, 83)
-
         pg.draw.rect(self.screen, button_color, end_turn_rect, border_radius=100)
         font = pg.font.Font(None, 36)
         text = font.render(f"End turn", True, pg.Color(89, 61, 59))
@@ -159,6 +166,15 @@ class Graphics:
                     self.start_tile = None
                     self.target_tile = None
                     return
+    
+    # if button is clicked change turn in GameController
+    def click_button(self, mouse, gC):
+        pair = find_button(mouse)
+
+        if pair is None:
+            return
+        
+        gC.end_turn()
 
     # if button is clicked change turn in GameController
     def click_button(self, mouse, game):
