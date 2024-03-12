@@ -77,3 +77,24 @@ class TestTerminalState(unittest.TestCase):
         self.assertIn(Action((2, 2), (4, 2), Step.JUMP), actions)
         self.assertIn(Action((2, 2), (4, 4), Step.JUMP), actions)
         self.assertEqual(len(actions), 6)
+
+    def test_actions_should_not_detect_invalid_jumps(self):
+        """
+           0  1  2  3  4
+        0  2  .  2  .  .
+        1  .  2  2  .  .
+        2  2  2  1  2  2
+        3  .  .  2  2  .
+        4  .  .  2  .  2
+        """
+        board = Board(triangle_size=2, initialised=False)
+        board.place_pegs(1, [(2, 2)])
+        board.place_pegs(2, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
+        board.place_pegs(2, [(0, 0), (0, 2), (2, 0), (2, 4), (4, 2), (4, 4)])
+        sut = ChineseCheckers()
+        state = sut.initial_state
+        state.board = board
+
+        actions = list(sut.actions(state))
+
+        self.assertEqual(len(actions), 0)
