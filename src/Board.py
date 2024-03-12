@@ -136,7 +136,7 @@ class Board:
             text += '\n' + str(i) + separator + separator.join(str(x) if x else '.' for x in row)
         return text
 
-    def copy(self):
+    def __copy__(self):
         new_board = Board(self.triangle_size)
         new_board.matrix = np.copy(self.matrix)
         return new_board

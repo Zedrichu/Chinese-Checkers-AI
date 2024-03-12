@@ -1,16 +1,31 @@
 from ChineseCheckers import Step
-# Class to control the game
-# TODO: Refactor the code to make it more readable, proof of concept
-from State import State
+from MinimaxAI import MinimaxAI
+from RandomPlayer import RandomPlayer
+import State
+from Board import Board
+from ChineseCheckers import ChineseCheckers
+from Graphics import Graphics
 
-STARTING_PLAYER = 1
 
 class GameController:
-    def __init__(self, board):
-        self.turn = STARTING_PLAYER
-        self.board = board
-        self.state = State(board=board, player=STARTING_PLAYER, mode=Step.CRAWL, peg=(0, 0))
-        # self.players = [Player(i) for i in range(1,3)]
+    def __init__(self):
+        self.problem = ChineseCheckers(triangle_size=1)
+        # self.gui = Graphics(self.problem.initial_state)
+        self.players = [RandomPlayer(), RandomPlayer()]
 
-    def end_turn(self):
-        self.turn = self.turn % 2 + 1
+    def game_loop(self):
+        state = self.problem.initial_state
+        print(state)
+
+        while not self.problem.terminal_test(state):
+            action = self.players[state.player - 1].get_action(self.problem, state)
+            state = self.problem.result(state, action)
+
+            print(f'Action applied: {action}')
+            print(state)
+
+        print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
+
+
+if __name__ == '__main__':
+    GameController().game_loop()

@@ -5,7 +5,7 @@ import numpy as np
 from ChineseCheckers import ChineseCheckers
 
 
-class StepTests(unittest.TestCase):
+class TerminalTests(unittest.TestCase):
     def test_terminal_test_on_initial_state(self):
         sut = ChineseCheckers()
         state = sut.initial_state

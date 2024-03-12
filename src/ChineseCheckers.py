@@ -1,3 +1,4 @@
+from copy import copy
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Tuple, List, Iterable
@@ -45,7 +46,7 @@ class ChineseCheckers(GameProblem):
                     yield from self._peg_actions(state, (i, j))
 
     def result(self, state: State, action: Action) -> State:
-        new_board = state.board.copy()
+        new_board = copy(state.board)
         new_board.move(action.src, action.dest)
 
         new_state = State(new_board, state.player, action.step_type, action.dest)

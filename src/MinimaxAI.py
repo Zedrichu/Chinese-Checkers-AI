@@ -1,20 +1,18 @@
-from src.State import State
-from src.Action import Action
-from src.PlayerInterface import PlayerInterface
-from src.ChineseCheckers import ChineseCheckers
+import GameProblem
+from State import State
+from Action import Action
+from PlayerInterface import PlayerInterface
 
 
 class MinimaxAI(PlayerInterface):
-    def __init__(self, player_id: int):
-        super().__init__(player_id)
-
-    def get_action(self, state: State) -> Action:
+    def get_action(self, problem: GameProblem, state: State) -> Action:
         return self.minimax_decision(state)
 
     @staticmethod
-    def minimax(state, depth, alpha, beta, max_player):
+    def minimax(prob: GameProblem, state: State, depth: int, alpha: float, beta: float, max_player: int):
         """
         Minimax algorithm with alpha-beta pruning
+        :param prob: formal definition of a Game Problem
         :param state:
         :param depth:
         :param alpha:
@@ -22,15 +20,15 @@ class MinimaxAI(PlayerInterface):
         :param max_player:
         :return:
         """
-        if depth == 0 or ChineseCheckers.terminal_test(state):
-            return state, ChineseCheckers.utility(state, max_player)
+        if depth == 0 or prob.terminal_test(state):
+            return state, prob.utility(state, max_player)
 
         if max_player:
             max_eval = float('-inf')
             best_action = None
-            for action in ChineseCheckers.actions(state):
-                child = ChineseCheckers.result(state, action)
-                evl, _ = MinimaxAI.minimax(child, depth - 1, alpha, beta, False)
+            for action in prob.actions(state):
+                child = prob.result(state, action)
+                evl, _ = MinimaxAI.minimax(prob, child, depth - 1, alpha, beta, False)
                 if evl > max_eval:
                     max_eval = evl
                     best_action = action
@@ -42,9 +40,9 @@ class MinimaxAI(PlayerInterface):
         else:
             min_eval = float('inf')
             best_action = None
-            for action in ChineseCheckers.actions(state):
-                child = ChineseCheckers.result(state, action)
-                evl, _ = MinimaxAI.minimax(child, depth - 1, alpha, beta, True)
+            for action in prob.actions(state):
+                child = prob.result(state, action)
+                evl, _ = MinimaxAI.minimax(prob, child, depth - 1, alpha, beta, True)
                 if evl < min_eval:
                     min_eval = evl
                     best_action = action
