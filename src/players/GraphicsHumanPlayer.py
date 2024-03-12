@@ -2,11 +2,11 @@ import GameProblem
 import Graphics
 
 from Action import Action
-from PlayerInterface import PlayerInterface
 from State import State
+from players.Player import Player
 
 
-class GraphicsHumanPlayer(PlayerInterface):
+class GraphicsHumanPlayer(Player):
 
     def __init__(self, gui: Graphics):
         self.gui = gui
