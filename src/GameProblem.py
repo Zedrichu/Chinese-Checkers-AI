@@ -1,5 +1,7 @@
 from functools import cached_property
 
+from State import State
+
 
 class GameProblem:
     @cached_property
@@ -9,7 +11,7 @@ class GameProblem:
     def player(self, state):
         raise NotImplementedError
 
-    def actions(self, state):
+    def actions(self, state: State):
         raise NotImplementedError
 
     def result(self, state, action):

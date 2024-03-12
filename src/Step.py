@@ -8,7 +8,7 @@ class Step:
     JUMP = 2
 
     @staticmethod
-    def validate_end(src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
+    def _validate_end(src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
         """
         Validate if the src and dest coordinates are the same for an END type of movement
         :param src: coordinate tuple of source peg
@@ -21,7 +21,7 @@ class Step:
 
     # Validate a crawl type of movement from src coordinates to dest coordinates
     @staticmethod
-    def validate_crawl(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
+    def _validate_crawl(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
         x1, y1 = src
         x2, y2 = dest
         delta_x12 = abs(x1 - x2)
@@ -34,7 +34,7 @@ class Step:
         return False
 
     @staticmethod
-    def validate_jump(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
+    def _validate_jump(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
         x1, y1 = src
         x2, y2 = dest
         delta_x12 = abs(x1 - x2)
@@ -50,17 +50,17 @@ class Step:
     @staticmethod
     def validate_head(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> Optional[int]:
         if (abs(src[0] - dest[0]) <= 1 and abs(src[1] - dest[1]) <= 1
-                and Step.validate_crawl(board, src, dest)):
+                and Step._validate_crawl(board, src, dest)):
             return Step.CRAWL
-        elif Step.validate_jump(board, src, dest):
+        elif Step._validate_jump(board, src, dest):
             return Step.JUMP
         else:
             return None
 
     @staticmethod
     def validate_tail(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> Optional[int]:
-        if Step.validate_end(src, dest):
+        if Step._validate_end(src, dest):
             return Step.END
-        elif Step.validate_jump(board, src, dest):
+        elif Step._validate_jump(board, src, dest):
             return Step.JUMP
         return None

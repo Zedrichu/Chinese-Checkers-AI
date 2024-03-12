@@ -1,6 +1,6 @@
 import random
-
 import GameProblem
+
 from Action import Action
 from PlayerInterface import PlayerInterface
 from State import State
