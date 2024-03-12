@@ -1,6 +1,5 @@
 # Class to control the game
 # TODO: Refactor the code to make it more readable, proof of concept
-from typing import Tuple
 
 from GameProblem import Step
 from State import State

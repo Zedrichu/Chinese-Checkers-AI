@@ -1,7 +1,6 @@
-import pygame as pg
 import numpy as np
+import pygame as pg
 
-from GameController import GameController
 from GameProblem import Step
 
 CIRCLE_RADIUS = 20
