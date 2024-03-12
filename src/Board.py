@@ -102,7 +102,11 @@ class Board:
         return 0 <= coords[0] < self.board_size and 0 <= coords[1] < self.board_size
 
     def __str__(self):
-        return '\n'.join('\t'.join(str(x) if x else '.' for x in row) for row in self.matrix)
+        separator = '  '
+        text = ' ' + separator + separator.join((str(i) for i in range(self.matrix.shape[0])))
+        for i, row in enumerate(self.matrix):
+            text += '\n' + str(i) + separator + separator.join(str(x) if x else '.' for x in row)
+        return text
 
     def copy(self):
         new_board = Board(self.triangle_size)
