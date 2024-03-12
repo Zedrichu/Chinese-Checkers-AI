@@ -39,32 +39,6 @@ class Board:
                 if self.within_bounds(dest):
                     yield dest
 
-    @cached_property
-    def top_right_corner_coords(self) -> List[Tuple[int, int]]:
-        """
-        Returns the coordinates of the top-right corner of the board.
-        :return: list of coordinate pairs
-        """
-        res = []
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                if i + j < self.triangle_size:
-                    res.append((i, self.board_size - 1 - j))
-        return res
-
-    @cached_property
-    def bottom_left_corner_coords(self) -> List[Tuple[int, int]]:
-        """
-        Returns the coordinates of the bottom-left corner of the board.
-        :return: list of coordinate pairs
-        """
-        res = []
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                if i + j < self.triangle_size:
-                    res.append((self.board_size - 1 - i, j))
-        return res
-
     def is_top_filled(self) -> bool:
         """
         Checks if the top-right corner of the board is filled with pegs.

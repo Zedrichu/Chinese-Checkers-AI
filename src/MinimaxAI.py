@@ -27,22 +27,28 @@ class MinimaxAI(PlayerInterface):
 
         if max_player:
             max_eval = float('-inf')
+            best_action = None
             for action in ChineseCheckers.actions(state):
                 child = ChineseCheckers.result(state, action)
-                evl = MinimaxAI.minimax(child, depth - 1, alpha, beta, False)
-                max_eval = max(max_eval, evl)
+                evl, _ = MinimaxAI.minimax(child, depth - 1, alpha, beta, False)
+                if evl > max_eval:
+                    max_eval = evl
+                    best_action = action
                 alpha = max(alpha, evl)
                 if beta <= alpha:
                     break
-            return max_eval
+            return max_eval, best_action
 
         else:
             min_eval = float('inf')
+            best_action = None
             for action in ChineseCheckers.actions(state):
                 child = ChineseCheckers.result(state, action)
-                evl = MinimaxAI.minimax(child, depth - 1, alpha, beta, True)
-                min_eval = min(min_eval, evl)
+                evl, _ = MinimaxAI.minimax(child, depth - 1, alpha, beta, True)
+                if evl < min_eval:
+                    min_eval = evl
+                    best_action = action
                 beta = min(beta, evl)
                 if beta <= alpha:
                     break
-            return min_eval
+            return min_eval, best_action
