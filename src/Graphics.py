@@ -6,7 +6,7 @@ from State import State
 CIRCLE_RADIUS = 20
 TILE_SIZE = 50
 OFFSET = TILE_SIZE // 2
-RESOLUTION = 720s
+RESOLUTION = 720
 
 # Rectangles in which the game is split
 # 1. Game

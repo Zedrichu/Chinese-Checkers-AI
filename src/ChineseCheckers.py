@@ -17,7 +17,7 @@ class ChineseCheckers(GameProblem):
         return state.player
 
     @staticmethod
-    def peg_actions(state, src: Tuple[int, int]) -> Iterable[Action]:
+    def _peg_actions(state, src: Tuple[int, int]) -> Iterable[Action]:
         board = state.board
 
         for i in range(-2, 3):
