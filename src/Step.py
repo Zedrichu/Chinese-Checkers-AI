@@ -1,4 +1,4 @@
-from src.Board import Board
+from Board import Board
 from typing import Tuple, Optional
 
 
