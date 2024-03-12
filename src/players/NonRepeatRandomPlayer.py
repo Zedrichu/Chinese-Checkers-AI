@@ -3,11 +3,11 @@ import GameProblem
 
 from typing import Optional
 from Action import Action
-from PlayerInterface import PlayerInterface
 from State import State
+from players.Player import Player
 
 
-class NonRepeatingRandomPlayer(PlayerInterface):
+class NonRepeatingRandomPlayer(Player):
     """
     A player that will not repeat an action for a given state
     """

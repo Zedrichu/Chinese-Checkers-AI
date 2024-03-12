@@ -1,7 +1,7 @@
 import time
 
-from GraphicsHumanPlayer import GraphicsHumanPlayer
-from RandomPlayer import RandomPlayer
+from players.GraphicsHumanPlayer import GraphicsHumanPlayer
+from players.RandomPlayer import RandomPlayer
 from ChineseCheckers import ChineseCheckers
 from Graphics import Graphics
 

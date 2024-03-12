@@ -2,11 +2,11 @@ import random
 import GameProblem
 
 from Action import Action
-from PlayerInterface import PlayerInterface
 from State import State
+from players.Player import Player
 
 
-class RandomPlayer(PlayerInterface):
+class RandomPlayer(Player):
 
     def get_action(self, problem: GameProblem, state: State) -> Action:
         return random.choice(list(problem.actions(state)))
