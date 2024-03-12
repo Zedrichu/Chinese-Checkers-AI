@@ -1,5 +1,5 @@
 from functools import cache
-from typing import Tuple, List
+from typing import Tuple, List, Iterable
 
 import numpy as np
 
@@ -33,11 +33,13 @@ def _bot_left_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[i
 
 
 class Board:
-    def __init__(self, triangle_size: int):
+    def __init__(self, triangle_size: int, initialised=True):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-        self.init_board()
+
+        if initialised:
+            self.init_board()
 
     def init_board(self):
         """
@@ -49,9 +51,9 @@ class Board:
                 #   with dimensions triangle_size • triangle_size
                 if j + i < self.triangle_size:
                     # Translate triangular matrix bottom-left corner
-                    self.matrix[self.board_size - 1 - i][j] = 1
+                    self.place_pegs(1, [(self.board_size - 1 - i, j)])
                     # Translate triangular matrix top-right corner
-                    self.matrix[i][self.board_size - 1 - j] = 2
+                    self.place_pegs(2, [(i, self.board_size - 1 - j)])
 
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
@@ -128,6 +130,10 @@ class Board:
         :return: boolean value indicating if the coordinates are within the bounds of the board
         """
         return 0 <= coords[0] < self.board_size and 0 <= coords[1] < self.board_size
+
+    def place_pegs(self, player_id: int, destinations: Iterable[Tuple[int, int]]):
+        for dest in destinations:
+            self.matrix[dest] = player_id
 
     def __str__(self):
         separator = '  '
