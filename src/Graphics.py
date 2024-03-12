@@ -1,7 +1,7 @@
 import numpy as np
 import pygame as pg
-
-from GameProblem import Step
+from ChineseCheckers import Step, ChineseCheckers
+from State import State
 
 CIRCLE_RADIUS = 20
 TILE_SIZE = 50
@@ -17,14 +17,6 @@ turn_rect = pg.Rect((0, RESOLUTION - 50, 720, 50))
 end_turn_rect = pg.Rect(RESOLUTION - 150, RESOLUTION - 150, 120, 50)
 
 
-# Rectangles in which the game is split
-# 1. Game
-game_rect = pg.Rect(0, 0, RESOLUTION, RESOLUTION-50)
-# 2. Turn
-turn_rect = pg.Rect((0, RESOLUTION - 50, 720, 50))
-# 3. End-turn button
-end_turn_rect = pg.Rect(RESOLUTION-150, RESOLUTION-150, 120, 50)
-
 # Method to find the circle that the mouse is hovering over
 def find_circle(mouse):
     # Compute the tile position - swap mouse coordinates
@@ -39,6 +31,7 @@ def find_circle(mouse):
 
     return None
 
+
 # Method to find if the mouse is hovering over the end-turn button
 def find_button(mouse):
     x = mouse[0]
@@ -47,28 +40,32 @@ def find_button(mouse):
     # Verify that mouse is inside end-turn button
     if (end_turn_rect.left < x < end_turn_rect.right) and (end_turn_rect.top < y < end_turn_rect.bottom):
         return x, y
-    
+
     return None
 
 
 class Graphics:
 
-    def __init__(self, board, screen):
-        self.board = board
-        # self.screen = pg.display.set_mode((self.board.board_size * 50, self.board.board_size * 50))
-        self.screen = screen
+    def __init__(self, state: State):
+        pg.init()
+        self.state = state
+        self.board = self.state.board
+        self.img = pg.image.load('img/wood.jpg')
+        self.screen = pg.display.set_mode((RESOLUTION, RESOLUTION))
         self.colors = ['blue', 'red']
         self.start_tile = None
         self.target_tile = None
-        self.game_container_res = [screen.get_width(), screen.get_height()]
+        pg.display.set_caption('Chinese Checkers')
 
-        self.game_container_res = [screen.get_width(), screen.get_height()]
+    # Method to draw every aspect of the game
+    def draw_everything(self):
+        self.screen.blit(self.img, (0, 0))
+        self.draw_diamond_board(self.board)
+        self.draw_current_player_turn(self.state.player)
+        self.draw_end_turn_button()
 
     # Method to draw circles for each tile in a diamond shape
     def draw_diamond_board(self, game):
-        # Background - use img
-        # screen.blit(img,)
-
         # screen.fill((255, 255, 255))
         for i in range(self.board.board_size):
             for j in range(self.board.board_size):
@@ -90,7 +87,7 @@ class Graphics:
         peg = self.start_tile
         if peg is not None:
             self.highlight_peg(peg, game.turn)
-            self.highlight_possible_moves(peg)
+            self.highlight_possible_moves(game.state)
 
     # Draw the turn rectangle with text
     def draw_current_player_turn(self, turn: int):
@@ -99,11 +96,12 @@ class Graphics:
         text = font.render(f"Player {turn}'s turn", True, pg.Color(self.colors[turn - 1]))
         self.screen.blit(text, (270, self.screen.get_height() - 40))
 
-    def draw_end_turn_button(self, mouse):
-        button_color = (171, 148, 126)
-        if end_turn_rect.collidepoint(mouse):  # Check if mouse is hovering
-            button_color = (111, 94, 83)
-        pg.draw.rect(self.screen, button_color, end_turn_rect, border_radius=100)
+    def draw_end_turn_button(self):
+        # TODO: Do hover effect in the same way as for the circles, even hiding it in same method
+        #button_color = (171, 148, 126)
+        #if end_turn_rect.collidepoint(mouse):  # Check if mouse is hovering
+        #    button_color = (111, 94, 83)
+        pg.draw.rect(self.screen, (171, 148, 126), end_turn_rect, border_radius=100)
         font = pg.font.Font(None, 36)
         text = font.render(f"End turn", True, pg.Color(89, 61, 59))
         text_rect = text.get_rect(center=end_turn_rect.center)
@@ -116,17 +114,18 @@ class Graphics:
         pg.draw.circle(self.screen, pg.Color('green'),
                        (self.start_tile[1] * 50 + 25, self.start_tile[0] * 50 + 25),22, 5)
 
-    def highlight_possible_moves(self, src: tuple):
-        x, y = src[0], src[1]
-        for move_coords in np.ndindex(self.board.matrix.shape):
-            if Step.validate_step(self.board, (x, y), move_coords):
-                pg.draw.circle(self.screen, pg.Color('white'),
-                               (move_coords[1] * 50 + 25, move_coords[0] * 50 + 25),CIRCLE_RADIUS, 5)
+    def highlight_possible_moves(self, src: State):
+        return None
+        # x, y = src[0], src[1]
+        # for move_coords in np.ndindex(self.board.matrix.shape):
+        #     if ChineseCheckers.actions(self.board, state=src):
+        #         pg.draw.circle(self.screen, pg.Color('white'),
+        #                        (move_coords[1] * 50 + 25, move_coords[0] * 50 + 25),CIRCLE_RADIUS, 5)
 
     def click(self, mouse, game):
         pair = find_circle(mouse)
 
-        if pair is None or not self.board.within_bounds(pair[0], pair[1]):
+        if pair is None or not self.board.within_bounds((pair[0], pair[1])):
             return
 
         i, j = pair
@@ -165,14 +164,14 @@ class Graphics:
                     self.start_tile = None
                     self.target_tile = None
                     return
-    
+
     # if button is clicked change turn in GameController
     def click_button(self, mouse, gC):
         pair = find_button(mouse)
 
         if pair is None:
             return
-        
+
         gC.end_turn()
 
     # if button is clicked change turn in GameController
@@ -187,7 +186,7 @@ class Graphics:
     def hover(self, mouse, game):
         pair = find_circle(mouse)
 
-        if pair is None or not self.board.within_bounds(pair[0], pair[1]):
+        if pair is None or not self.board.within_bounds((pair[0], pair[1])):
             return
 
         i, j = pair
