@@ -1,12 +1,11 @@
 from copy import copy
-from dataclasses import dataclass
 from functools import cached_property
-from typing import Tuple, List, Iterable
-from src.GameProblem import GameProblem
-from src.Step import Step
-from src.Action import Action
-from src.State import State
-from src.Board import Board
+from typing import Tuple, Iterable
+from GameProblem import GameProblem
+from Step import Step
+from Action import Action
+from State import State
+from Board import Board
 
 
 class ChineseCheckers(GameProblem):

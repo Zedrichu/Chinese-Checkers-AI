@@ -1,7 +1,7 @@
+import numpy as np
+
 from dataclasses import dataclass
 from typing import Optional, Tuple
-
-import numpy as np
 from Board import Board
 
 

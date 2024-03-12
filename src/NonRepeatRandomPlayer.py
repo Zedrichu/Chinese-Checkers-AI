@@ -1,7 +1,7 @@
 import random
-from typing import Optional
-
 import GameProblem
+
+from typing import Optional
 from Action import Action
 from PlayerInterface import PlayerInterface
 from State import State

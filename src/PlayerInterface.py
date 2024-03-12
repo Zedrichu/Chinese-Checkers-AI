@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
-
 import GameProblem
-from src.State import State
-from src.Action import Action
+
+from abc import ABC, abstractmethod
+from State import State
+from Action import Action
 
 
 class PlayerInterface(ABC):
