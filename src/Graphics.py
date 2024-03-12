@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pygame as pg
 import ChineseCheckers
@@ -71,8 +73,8 @@ class Graphics:
     def handle_events(self):
         for ev in self.pg.event.get():
             if ev.type == self.pg.QUIT:
-                self.pg.display.quit()
                 self.pg.quit()
+                sys.exit()
 
     # Method to draw circles for each tile in a diamond shape
     def draw_diamond_board(self, board: Board):
