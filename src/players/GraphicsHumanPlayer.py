@@ -13,8 +13,8 @@ class GraphicsHumanPlayer(Player):
 
     def get_action(self, problem: GameProblem, state: State) -> Action:
         actions = list(problem.actions(state))
-        self.gui.start_listening_to_actions()
+        self.gui.start_listening_to_actions(actions)
         while not self.gui.is_move_ready():
             self.gui.handle_events(state, actions)
-            self.gui.draw_everything(state)
-        return self.gui.get_action()
+        action = self.gui.get_action()
+        return action
