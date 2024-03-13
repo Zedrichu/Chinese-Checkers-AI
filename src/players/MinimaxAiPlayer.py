@@ -5,7 +5,7 @@ from Action import Action
 from players.Player import Player
 
 
-class MinimaxAiPlayer(Player):
+class MinimaxAIPlayer(Player):
     def get_action(self, problem: GameProblem, state: State) -> Action:
         return self.minimax_decision(state)
 
@@ -29,7 +29,7 @@ class MinimaxAiPlayer(Player):
             best_action = None
             for action in prob.actions(state):
                 child = prob.result(state, action)
-                evl, _ = MinimaxAiPlayer.minimax(prob, child, depth - 1, alpha, beta, False)
+                evl, _ = MinimaxAIPlayer.minimax(prob, child, depth - 1, alpha, beta, False)
                 if evl > max_eval:
                     max_eval = evl
                     best_action = action
@@ -43,7 +43,7 @@ class MinimaxAiPlayer(Player):
             best_action = None
             for action in prob.actions(state):
                 child = prob.result(state, action)
-                evl, _ = MinimaxAiPlayer.minimax(prob, child, depth - 1, alpha, beta, True)
+                evl, _ = MinimaxAIPlayer.minimax(prob, child, depth - 1, alpha, beta, True)
                 if evl < min_eval:
                     min_eval = evl
                     best_action = action
