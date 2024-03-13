@@ -1,4 +1,4 @@
-from Board import Board
+from game.Board import Board
 from typing import Tuple, Optional
 
 

@@ -1,16 +1,13 @@
 import unittest
-
 import numpy as np
 
-from ChineseCheckers import ChineseCheckers
+from src.game_problem.ChineseCheckers import ChineseCheckers
 
 
 class TestTerminalState(unittest.TestCase):
     def test_terminal_test_on_initial_state(self):
-        sut = ChineseCheckers()
+        sut = ChineseCheckers(3)
         state = sut.initial_state
-
-        self.assertFalse(sut.terminal_test(state))
 
         self.assertFalse(sut.terminal_test(state))
 

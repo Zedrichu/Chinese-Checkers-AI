@@ -1,9 +1,9 @@
 import unittest
 
-from Action import Action
-from Board import Board
-from ChineseCheckers import ChineseCheckers
-from Step import Step
+from game.Action import Action
+from game.Board import Board
+from game_problem.ChineseCheckers import ChineseCheckers
+from game.Step import Step
 
 
 class TestTerminalState(unittest.TestCase):

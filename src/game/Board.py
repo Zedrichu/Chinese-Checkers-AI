@@ -1,11 +1,11 @@
-from functools import cache
+from functools import cache, cached_property
 from typing import Tuple, List, Iterable
 
 import numpy as np
 
 
 @cache
-def _top_right_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[int, int]]:
+def _top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the top-right corner of the board.
     :return: list of coordinate pairs
@@ -15,11 +15,11 @@ def _top_right_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((i, board_size - 1 - j))
-    return res
+    return np.array(res)
 
 
 @cache
-def _bot_left_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[int, int]]:
+def _bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the bottom-left corner of the board.
     :return: list of coordinate pairs
@@ -29,7 +29,7 @@ def _bot_left_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[i
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((board_size - 1 - i, j))
-    return res
+    return np.array(res)
 
 
 class Board:
@@ -37,7 +37,8 @@ class Board:
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-
+        self.corner_triangles = [_bot_left_corner_coords(self.triangle_size, self.board_size),
+                                 _top_right_corner_coords(self.triangle_size, self.board_size)]
         if initialised:
             self.init_board()
 
@@ -45,15 +46,56 @@ class Board:
         """
         Initializes the board with the triangular matrices for each player at opposite corners.
         """
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                # Define small triangular matrix function
-                #   with dimensions triangle_size • triangle_size
-                if j + i < self.triangle_size:
-                    # Translate triangular matrix bottom-left corner
-                    self.place_pegs(1, [(self.board_size - 1 - i, j)])
-                    # Translate triangular matrix top-right corner
-                    self.place_pegs(2, [(i, self.board_size - 1 - j)])
+        # for i in range(self.triangle_size):
+        #     for j in range(self.triangle_size):
+        #         # Define small triangular matrix function
+        #         #   with dimensions triangle_size • triangle_size
+        #         if j + i < self.triangle_size:
+        #             # Translate triangular matrix bottom-left corner
+        #             self.place_pegs(1, [(self.board_size - 1 - i, j)])
+        #             # Translate triangular matrix top-right corner
+        #             self.place_pegs(2, [(i, self.board_size - 1 - j)])
+        self.matrix[self.corner_triangles[0][:, 0], self.corner_triangles[0][:, 1]] = 1
+        self.matrix[self.corner_triangles[1][:, 0], self.corner_triangles[1][:, 1]] = 2
+
+    @cached_property
+    def initial_avg_euclidean(self):
+        """
+        Returns the average Euclidian distance between the two initial corner triangles
+        :return: mean of Euclidian distances
+        """
+        diffs = self.corner_triangles[0] - [0, self.board_size - 1]
+        distances = np.linalg.norm(diffs, axis=1)
+        return np.mean(distances)
+
+    def average_euclidean_to_corner(self, player) -> float:
+        if player == 1:
+            corner = [0, self.board_size - 1]
+        else:
+            corner = [self.board_size - 1, 0]
+
+        indices = np.argwhere(self.matrix == player)
+        distances = np.linalg.norm(indices - corner, axis=1)
+        return np.mean(distances)
+
+    def average_manhattan_to_corner(self, player) -> float:
+        if player == 1:
+            corner = [0, self.board_size - 1]
+        else:
+            corner = [self.board_size - 1, 0]
+
+        indices = np.argwhere(self.matrix == player)
+        distances = np.sum(np.abs(indices - corner), axis=1)
+        return np.mean(distances)
+
+    def sum_player_pegs(self, player: int) -> float:
+        """
+        Returns the sum of pegs in the corner triangles for a specific player.
+        :param player:
+        :return:
+        """
+        corner = self.corner_triangles[player - 1]
+        return np.sum(self.matrix[corner[:, 0], corner[:, 1]] == player)
 
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
@@ -100,17 +142,12 @@ class Board:
         return all(self.matrix[pair] == value for pair in _bot_left_corner_coords(self.triangle_size, self.board_size))
 
     def is_cornered(self, corner: str, value: int) -> bool:
-        if corner == 'top':
-            check_condition = lambda i, j: self.matrix[i][self.board_size - 1 - j] != value
-        else:  # corner == 'bottom'
-            check_condition = lambda i, j: self.matrix[self.board_size - 1 - i][j] != value
+        if corner == 'bottom':
+            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+        else:  # corner == 'top'
+            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
 
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                if i + j < self.triangle_size:
-                    if check_condition(i, j):
-                        return False
-        return True
+        return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] == value)
 
     def move(self, initial_pos: Tuple[int, int], path: Tuple[int, int]):
         current_x, current_y = initial_pos
