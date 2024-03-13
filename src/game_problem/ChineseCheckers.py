@@ -1,11 +1,11 @@
 from copy import copy
 from functools import cached_property
 from typing import Tuple, Iterable
-from GameProblem import GameProblem
-from Step import Step
-from Action import Action
-from State import State
-from Board import Board
+from game_problem.GameProblem import GameProblem
+from game.Step import Step
+from game.Action import Action
+from game.State import State
+from game.Board import Board
 
 
 class ChineseCheckers(GameProblem):
@@ -64,14 +64,6 @@ class ChineseCheckers(GameProblem):
         if state.board.is_cornered('top', player):
             return 1
         return -1
-
-    @staticmethod
-    def path_cost(c, state1, action, state2):
-        return c + 1
-
-    @staticmethod
-    def cutoff_test(state: State):
-        raise NotImplementedError
 
 
 if __name__ == "__main__":

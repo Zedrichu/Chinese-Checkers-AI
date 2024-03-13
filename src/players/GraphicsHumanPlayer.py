@@ -1,8 +1,7 @@
-import GameProblem
-import Graphics
-
-from Action import Action
-from State import State
+from game import Graphics
+from game.Action import Action
+from game.State import State
+from game_problem import GameProblem
 from players.Player import Player
 
 
