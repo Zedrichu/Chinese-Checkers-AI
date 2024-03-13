@@ -149,11 +149,15 @@ class Graphics:
                        CIRCLE_RADIUS + 2, 5)
 
     def highlight_possible_moves(self, actions):
-        for action in actions:
-            coords = action.dest
-            pg.draw.circle(self.screen, pg.Color('white'),
-                           (coords[1] * TILE_SIZE + OFFSET, coords[0] * TILE_SIZE + OFFSET),
-                           CIRCLE_RADIUS, 5)
+        if self.start_tile is not None:
+            for action in actions:
+                coords = action.dest
+                if action.src == self.start_tile:
+                    pg.draw.circle(surface=self.screen,
+                                   color=pg.Color('white'),
+                                   center=(coords[1] * TILE_SIZE + OFFSET, coords[0] * TILE_SIZE + OFFSET),
+                                   radius=CIRCLE_RADIUS,
+                                   width=5)
 
     def is_move_ready(self):
         return self.selected_action is not None
