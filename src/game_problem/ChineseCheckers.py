@@ -14,7 +14,7 @@ class ChineseCheckers(GameProblem):
 
     @cached_property
     def initial_state(self) -> State:
-        return State(Board(self.triangle_size), 1, mode=0, peg=(None, None))
+        return State(Board(self.triangle_size), 1, mode=Step.END, peg=(None, None))
 
     def player(self, state: State) -> int:
         return state.player
@@ -58,7 +58,15 @@ class ChineseCheckers(GameProblem):
     def terminal_test(self, state: State) -> bool:
         player1 = state.board.is_cornered('top', 1)
         player2 = state.board.is_cornered('bottom', 2)
-        return player1 or player2
+        if player1 or player2:
+            return True
+        # Extension of terminal test to account for children that are terminal - losing can't be avoided
+        for a in self.actions(state):
+            new_state = self.result(state, a)
+            if (new_state.board.is_cornered('top', 1)
+                    or new_state.board.is_cornered('bottom', 2)):
+                return True
+        return False
 
     def utility(self, state: State, player: int) -> int:
         if state.board.is_cornered('top', player):
