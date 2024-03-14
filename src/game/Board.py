@@ -91,10 +91,10 @@ class Board:
     def sum_player_pegs(self, player: int) -> float:
         """
         Returns the sum of pegs in the corner triangles for a specific player.
-        :param player:
+        :param player: int
         :return:
         """
-        corner = self.corner_triangles[player - 1]
+        corner = self.corner_triangles[2 - player]  # 1-indexed player
         return np.sum(self.matrix[corner[:, 0], corner[:, 1]] == player)
 
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
@@ -111,43 +111,47 @@ class Board:
                 if self.within_bounds(dest):
                     yield dest
 
-    def is_top_filled(self) -> bool:
+    def is_cornered_pegs(self, corner: str) -> bool:
         """
-        Checks if the top-right corner of the board is filled with pegs.
+        Checks if the corner is filled with pegs of any type.
+        :param corner: string indicating the corner to be checked ('bottom' or 'top')
         :return: boolean value
         """
-        return all(self.matrix[pair] != 0 for pair in _top_right_corner_coords(self.triangle_size, self.board_size))
+        if corner == 'bottom':
+            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+        else:  # corner == 'top'
+            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
+        return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] != 0)
 
-    def is_bottom_filled(self) -> bool:
+    def is_cornered_with(self, corner: str, value: int) -> bool:
         """
-        Checks if the bottom-left corner of the board is filled with pegs.
+        Checks if the corner is filled with pegs of a specific value.
+        :param corner: string indicating the corner to be checked ('bottom' or 'top')
+        :param value: specific value to be checked for in the matrix
         :return: boolean value
         """
-        return all(self.matrix[pair] != 0 for pair in _bot_left_corner_coords(self.triangle_size, self.board_size))
-
-    def is_top_filled_with(self, value: int) -> bool:
-        """
-        Checks if the top-right corner of the board is filled with pegs of a specific value.
-        :param value: value of peg searching for in the top-right corner
-        :return: boolean value
-        """
-        return all(self.matrix[pair] == value for pair in _top_right_corner_coords(self.triangle_size, self.board_size))
-
-    def is_bottom_filled_with(self, value: int) -> bool:
-        """
-        Checks if the bottom-left corner of the board is filled with pegs of a specific value.
-        :param value: value of peg searching for in the bottom-left corner
-        :return: boolean value
-        """
-        return all(self.matrix[pair] == value for pair in _bot_left_corner_coords(self.triangle_size, self.board_size))
-
-    def is_cornered(self, corner: str, value: int) -> bool:
         if corner == 'bottom':
             np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
         else:  # corner == 'top'
             np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
 
         return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] == value)
+
+    def is_top_right_terminal(self) -> bool:
+        """
+        Checks if the top-right corner is terminal for player 1.
+        :return:
+        """
+        return (self.is_cornered_pegs('top') and  # Initial config has TOP with 2's
+                not self.is_cornered_with('top', 2))
+
+    def is_bot_left_terminal(self) -> bool:
+        """
+        Checks if the bottom-left corner is terminal for player 2.
+        :return: boolean value
+        """
+        return (self.is_cornered_pegs('bottom') and  # Initial config has BOTTOM with 1's
+                not self.is_cornered_with('bottom', 1))
 
     def move(self, initial_pos: Tuple[int, int], path: Tuple[int, int]):
         current_x, current_y = initial_pos

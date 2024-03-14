@@ -32,8 +32,8 @@ class TestTerminalState(unittest.TestCase):
         state.board.matrix = np.array([
             [0, 0, 0, 0, 1],
             [0, 0, 0, 0, 1],
-            [0, 0, 0, 0, 1],
             [2, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0],
             [2, 2, 0, 0, 0],
         ])
         self.assertTrue(sut.terminal_test(state))
@@ -47,7 +47,20 @@ class TestTerminalState(unittest.TestCase):
             [0, 0, 0, 0, 1],
             [2, 0, 0, 0, 0],
             [2, 0, 0, 0, 0],
-            [2, 0, 0, 0, 0],
+            [2, 1, 0, 0, 0],
         ])
         self.assertTrue(sut.terminal_test(state))
         self.assertEqual(sut.utility(state, player=1), 1)
+
+    def test_terminal_test_bottom_corner(self):
+        sut = ChineseCheckers(triangle_size=2)
+        state = sut.initial_state
+        state.board.matrix = np.array([
+            [0, 0, 1, 0, 1],
+            [0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0],
+            [2, 0, 0, 0, 0],
+            [2, 2, 0, 0, 0],
+        ])
+        self.assertTrue(sut.terminal_test(state))
+        self.assertEqual(sut.utility(state, player=1), -1)

@@ -56,22 +56,19 @@ class ChineseCheckers(GameProblem):
         return new_state
 
     def terminal_test(self, state: State) -> bool:
-        player1 = state.board.is_cornered('top', 1)
-        player2 = state.board.is_cornered('bottom', 2)
-        if player1 or player2:
-            return True
-        # Extension of terminal test to account for children that are terminal - losing can't be avoided
-        for a in self.actions(state):
-            new_state = self.result(state, a)
-            if (new_state.board.is_cornered('top', 1)
-                    or new_state.board.is_cornered('bottom', 2)):
-                return True
-        return False
+        """
+        :param state:
+        :return: True or False depending on
+        """
+        return state.board.is_top_right_terminal() or state.board.is_bot_left_terminal()
 
     def utility(self, state: State, player: int) -> int:
-        if state.board.is_cornered('top', player):
-            return 1
-        return -1
+        if state.board.is_top_right_terminal():
+            return (-1) ** (player == 2)
+        elif state.board.is_bot_left_terminal():
+            return (-1) ** (player == 1)
+        else:
+            return 0
 
 
 if __name__ == "__main__":
