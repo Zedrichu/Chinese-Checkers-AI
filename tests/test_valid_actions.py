@@ -6,7 +6,7 @@ from game_problem.ChineseCheckers import ChineseCheckers
 from game.Step import Step
 
 
-class TestTerminalState(unittest.TestCase):
+class TestValidActions(unittest.TestCase):
     def test_actions_should_detect_moves_to_adjacent_cells(self):
         """
            0  1  2  3  4

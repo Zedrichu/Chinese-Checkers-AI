@@ -2,6 +2,8 @@ import numpy as np
 
 from dataclasses import dataclass
 from typing import Optional, Tuple
+
+from game.Step import Step
 from game.Board import Board
 
 
@@ -9,7 +11,7 @@ from game.Board import Board
 class State:
     board: Board
     player: int = 1
-    mode: int = 0
+    mode: int = Step.END
     peg: Tuple[Optional[int], Optional[int]] = (None, None)
 
     def __str__(self):
