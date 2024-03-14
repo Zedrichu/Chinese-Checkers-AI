@@ -67,7 +67,6 @@ class Graphics:
         self.draw_diamond_board(state.board)
         self.draw_current_player_turn(state.player)
         self.draw_end_turn_button()
-        #self.pg.display.update()
 
     def start_listening_to_actions(self, actions: List[Action]):
         self.target_tile = None
@@ -107,16 +106,25 @@ class Graphics:
         for i in range(board.board_size):
             for j in range(board.board_size):
                 if board.matrix[i][j] == 1:
-                    pg.draw.circle(self.screen, blue, (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS)
+                    pg.draw.circle(surface=self.screen,
+                                   color=blue,
+                                   center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
+                                   radius=CIRCLE_RADIUS)
 
                 elif board.matrix[i][j] == 0:
 
                     # TODO: draw outline of the starting tiles of each player, in their respective color
-                    pg.draw.circle(self.screen, black, (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
-                                   CIRCLE_RADIUS, width=4)
+                    pg.draw.circle(surface=self.screen,
+                                   color=black,
+                                   center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
+                                   radius=CIRCLE_RADIUS,
+                                   width=4)
 
                 elif board.matrix[i][j] == 2:
-                    pg.draw.circle(self.screen, red, (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS)
+                    pg.draw.circle(surface=self.screen,
+                                   color=red,
+                                   center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
+                                   radius=CIRCLE_RADIUS)
 
         if self.start_tile is not None:
             self.highlight_selected_peg()
@@ -125,34 +133,52 @@ class Graphics:
         """
         Draw the turn rectangle with text
         """
-        pg.draw.rect(self.screen, (245, 245, 220), turn_rect)
+        rectangle_color = (245, 245, 220)
+        rectangle_text = f"Player {turn}'s turn"
+        player_color = pg.Color(self.colors[turn - 1])
+
+        pg.draw.rect(self.screen, rectangle_color, turn_rect)
         font = pg.font.Font(None, 36)
-        text = font.render(f"Player {turn}'s turn", True, pg.Color(self.colors[turn - 1]))
+        text = font.render(rectangle_text, True, player_color)
         self.screen.blit(text, (270, self.screen.get_height() - 40))
 
     def draw_end_turn_button(self):
-        # TODO: Do hover effect in the same way as for the circles, even hiding it in same method
+        """
+        Draw the end turn button with text
+        """
+        button_color_normal = (171, 148, 126)
+        button_color_hover = (111, 94, 83)
+        text_color = (89, 61, 59)
+        button_text = f"End turn"
+
         mouse = self.pg.mouse.get_pos()
-        button_color = (171, 148, 126)
+        button_color = button_color_normal
         if end_turn_rect.collidepoint(mouse):  # Check if mouse is hovering
-            button_color = (111, 94, 83)
+            button_color = button_color_hover
+
         pg.draw.rect(self.screen, button_color, end_turn_rect, border_radius=100)
         font = pg.font.Font(None, 36)
-        text = font.render(f"End turn", True, pg.Color(89, 61, 59))
+        text = font.render(button_text, True, text_color)
         text_rect = text.get_rect(center=end_turn_rect.center)
         self.screen.blit(text, text_rect)
 
     def highlight_selected_peg(self):
-        pg.draw.circle(self.screen, pg.Color('green'),
-                       (self.start_tile[1] * TILE_SIZE + OFFSET, self.start_tile[0] * TILE_SIZE + OFFSET),
-                       CIRCLE_RADIUS + 2, 5)
+        pg.draw.circle(surface=self.screen,
+                       color=pg.Color('green'),
+                       center=(self.start_tile[1] * TILE_SIZE + OFFSET, self.start_tile[0] * TILE_SIZE + OFFSET),
+                       radius=CIRCLE_RADIUS + 2,
+                       width=5)
 
     def highlight_possible_moves(self, actions):
-        for action in actions:
-            coords = action.dest
-            pg.draw.circle(self.screen, pg.Color('white'),
-                           (coords[1] * TILE_SIZE + OFFSET, coords[0] * TILE_SIZE + OFFSET),
-                           CIRCLE_RADIUS, 5)
+        if self.start_tile is not None:
+            for action in actions:
+                coords = action.dest
+                if action.src == self.start_tile:
+                    pg.draw.circle(surface=self.screen,
+                                   color=pg.Color('white'),
+                                   center=(coords[1] * TILE_SIZE + OFFSET, coords[0] * TILE_SIZE + OFFSET),
+                                   radius=CIRCLE_RADIUS,
+                                   width=5)
 
     def is_move_ready(self):
         return self.selected_action is not None
@@ -167,11 +193,14 @@ class Graphics:
 
         i, j = pair
 
+        print(f'Clicked on tile: {i, j}')
         if state.board.matrix[i][j] == state.player:
             self.start_tile = (i, j)
+            print(f'Start tile: {self.start_tile}')
 
         if state.board.matrix[i][j] == 0 and self.start_tile is not None:
             self.target_tile = (i, j)
+            print(f'Target tile: {self.target_tile}')
 
             start = self.start_tile
             target = self.target_tile
@@ -209,11 +238,16 @@ class Graphics:
 
         # color the outline of circles of the circle of current player's turn
         if state.board.matrix[i][j] == state.player and (i, j) is not self.start_tile:
-            #print(f"Hovering over tile: {i, j}")
-            #print(f'Printed on layer 0')
-            pg.draw.circle(self.screen, pg.Color('yellow'),
-                           (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS + 2, 5)
+            print(f"Hovering over tile: {i, j}")
+            print(f'Printed on layer 0')
+            pg.draw.circle(surface=self.screen,
+                           color=pg.Color('yellow'),
+                           center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
+                           radius=CIRCLE_RADIUS + 2,
+                           width=5)
         # don't do anything if tile is not owned by any player, if it is then highlight possible moves
         elif state.board.matrix[i][j] == 0 and self.start_tile is not None:
-            pg.draw.circle(self.screen, pg.Color(255, 255, 255),
-                           (j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET), CIRCLE_RADIUS)
+            pg.draw.circle(surface=self.screen,
+                           color=pg.Color('white'),
+                           center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),
+                           radius=CIRCLE_RADIUS)
