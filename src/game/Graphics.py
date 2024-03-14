@@ -193,14 +193,11 @@ class Graphics:
 
         i, j = pair
 
-        print(f'Clicked on tile: {i, j}')
         if state.board.matrix[i][j] == state.player:
             self.start_tile = (i, j)
-            print(f'Start tile: {self.start_tile}')
 
         if state.board.matrix[i][j] == 0 and self.start_tile is not None:
             self.target_tile = (i, j)
-            print(f'Target tile: {self.target_tile}')
 
             start = self.start_tile
             target = self.target_tile
@@ -238,8 +235,6 @@ class Graphics:
 
         # color the outline of circles of the circle of current player's turn
         if state.board.matrix[i][j] == state.player and (i, j) is not self.start_tile:
-            print(f"Hovering over tile: {i, j}")
-            print(f'Printed on layer 0')
             pg.draw.circle(surface=self.screen,
                            color=pg.Color('yellow'),
                            center=(j * TILE_SIZE + OFFSET, i * TILE_SIZE + OFFSET),

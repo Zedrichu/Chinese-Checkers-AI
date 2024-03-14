@@ -20,3 +20,6 @@ class State:
     def __eq__(self, other):
         return (self.player == other.player and self.mode == other.mode
                 and self.peg == other.peg and np.array_equal(self.board.matrix, other.board.matrix))
+
+    def __hash__(self):
+        return hash((self.board, self.player, self.mode))
