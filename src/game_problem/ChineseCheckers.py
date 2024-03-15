@@ -12,7 +12,6 @@ class ChineseCheckers(GameProblem):
     def __init__(self, triangle_size: int = 3):
         self.triangle_size = triangle_size
 
-    @cached_property
     def initial_state(self) -> State:
         return State(Board(self.triangle_size), 1, mode=Step.END, peg=(None, None))
 
