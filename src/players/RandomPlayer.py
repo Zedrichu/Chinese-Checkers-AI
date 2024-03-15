@@ -1,8 +1,8 @@
 import random
-import GameProblem
 
-from Action import Action
-from State import State
+from game_problem.GameProblem import GameProblem
+from game.Action import Action
+from game.State import State
 from players.Player import Player
 
 

@@ -1,9 +1,9 @@
 import random
-import GameProblem
+from game_problem import GameProblem
 
 from typing import Optional
-from Action import Action
-from State import State
+from game.Action import Action
+from game.State import State
 from players.Player import Player
 
 

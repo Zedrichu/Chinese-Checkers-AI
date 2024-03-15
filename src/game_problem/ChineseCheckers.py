@@ -1,20 +1,19 @@
 from copy import copy
 from functools import cached_property
 from typing import Tuple, Iterable
-from GameProblem import GameProblem
-from Step import Step
-from Action import Action
-from State import State
-from Board import Board
+from game_problem.GameProblem import GameProblem
+from game.Step import Step
+from game.Action import Action
+from game.State import State
+from game.Board import Board
 
 
 class ChineseCheckers(GameProblem):
     def __init__(self, triangle_size: int = 3):
         self.triangle_size = triangle_size
 
-    @cached_property
     def initial_state(self) -> State:
-        return State(Board(self.triangle_size), 1, mode=0, peg=(None, None))
+        return State(Board(self.triangle_size), 1, mode=Step.END, peg=(None, None))
 
     def player(self, state: State) -> int:
         return state.player
@@ -56,22 +55,19 @@ class ChineseCheckers(GameProblem):
         return new_state
 
     def terminal_test(self, state: State) -> bool:
-        player1 = state.board.is_cornered('top', 1)
-        player2 = state.board.is_cornered('bottom', 2)
-        return player1 or player2
+        """
+        :param state:
+        :return: True or False depending on
+        """
+        return state.board.is_top_right_terminal() or state.board.is_bot_left_terminal()
 
     def utility(self, state: State, player: int) -> int:
-        if state.board.is_cornered('top', player):
-            return 1
-        return -1
-
-    @staticmethod
-    def path_cost(c, state1, action, state2):
-        return c + 1
-
-    @staticmethod
-    def cutoff_test(state: State):
-        raise NotImplementedError
+        if state.board.is_top_right_terminal():
+            return (-1) ** (player == 2)
+        elif state.board.is_bot_left_terminal():
+            return (-1) ** (player == 1)
+        else:
+            return 0
 
 
 if __name__ == "__main__":

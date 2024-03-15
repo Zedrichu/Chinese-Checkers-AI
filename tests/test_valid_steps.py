@@ -1,9 +1,9 @@
 import unittest
 
 import numpy as np
-from typing import Tuple, Optional
-from src.Step import Step
-from src.Board import Board
+from typing import Optional
+from game.Step import Step
+from game.Board import Board
 from parameterized import parameterized
 
 

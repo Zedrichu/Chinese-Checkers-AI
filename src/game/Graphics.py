@@ -1,17 +1,16 @@
 import sys
-from typing import List, Optional
-
 import pygame as pg
 
-from Action import Action
-from Board import Board
-from State import State
-from Step import Step
+from game.Action import Action
+from game.Step import Step
+from typing import List, Optional
+from game.Board import Board
+from game.State import State
 
 CIRCLE_RADIUS = 25
 TILE_SIZE = 50
 OFFSET = TILE_SIZE // 2
-RESOLUTION = 720
+RESOLUTION = 1080
 
 # Rectangles in which the game is split
 # 1. Game
@@ -210,14 +209,11 @@ class Graphics:
 
         i, j = pair
 
-        print(f'Clicked on tile: {i, j}')
         if state.board.matrix[i][j] == state.player:
             self.start_tile = (i, j)
-            print(f'Start tile: {self.start_tile}')
 
         if state.board.matrix[i][j] == 0 and self.start_tile is not None:
             self.target_tile = (i, j)
-            print(f'Target tile: {self.target_tile}')
 
             start = self.start_tile
             target = self.target_tile
@@ -256,8 +252,6 @@ class Graphics:
 
         # color the outline of circles of the circle of current player's turn
         if state.board.matrix[i][j] == state.player and (i, j) is not self.start_tile:
-            print(f"Hovering over tile: {i, j}")
-            print(f'Printed on layer 0')
             pg.draw.circle(surface=self.screen,
                            color=pg.Color('yellow'),
                            center=center_position,
@@ -269,3 +263,17 @@ class Graphics:
                            color=pg.Color('white'),
                            center=center_position,
                            radius=CIRCLE_RADIUS)
+
+    def draw_end_game(self, player: int, utility: int):
+        """
+        Draw the end turn button with text
+        """
+        button_color_normal = (171, 148, 126)
+        button_color_hover = (111, 94, 83)
+        text_color = (89, 61, 59)
+        if utility == 1:
+            screen_text = f"Player {player}|{self.colors[player - 1]} wins!"
+        else:
+            screen_text = f"Player {player}|{self.colors[player - 1]} lost!"
+
+        # Draw the end game screen #TODO: make it look better

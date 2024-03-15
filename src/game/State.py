@@ -2,14 +2,16 @@ import numpy as np
 
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from Board import Board
+
+from game.Step import Step
+from game.Board import Board
 
 
 @dataclass
 class State:
     board: Board
     player: int = 1
-    mode: int = 0
+    mode: int = Step.END
     peg: Tuple[Optional[int], Optional[int]] = (None, None)
 
     def __str__(self):
@@ -18,3 +20,6 @@ class State:
     def __eq__(self, other):
         return (self.player == other.player and self.mode == other.mode
                 and self.peg == other.peg and np.array_equal(self.board.matrix, other.board.matrix))
+
+    def __hash__(self):
+        return hash((str(self.board.matrix), self.player, self.mode, self.peg))

@@ -1,11 +1,11 @@
-from Board import Board
+from game.Board import Board
 from typing import Tuple, Optional
 
 
 class Step:
-    END = 0
     CRAWL = 1
     JUMP = 2
+    END = 3
 
     @staticmethod
     def _validate_end(src: Tuple[int, int], dest: Tuple[int, int]) -> bool:

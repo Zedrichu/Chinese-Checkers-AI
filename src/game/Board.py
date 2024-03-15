@@ -1,11 +1,11 @@
-from functools import cache
+from functools import cache, cached_property
 from typing import Tuple, List, Iterable
 
 import numpy as np
 
 
 @cache
-def _top_right_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[int, int]]:
+def _top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the top-right corner of the board.
     :return: list of coordinate pairs
@@ -15,11 +15,11 @@ def _top_right_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((i, board_size - 1 - j))
-    return res
+    return np.array(res)
 
 
 @cache
-def _bot_left_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[int, int]]:
+def _bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the bottom-left corner of the board.
     :return: list of coordinate pairs
@@ -29,7 +29,7 @@ def _bot_left_corner_coords(triangle_size: int, board_size: int) -> List[Tuple[i
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((board_size - 1 - i, j))
-    return res
+    return np.array(res)
 
 
 class Board:
@@ -37,7 +37,8 @@ class Board:
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-
+        self.corner_triangles = [_bot_left_corner_coords(self.triangle_size, self.board_size),
+                                 _top_right_corner_coords(self.triangle_size, self.board_size)]
         if initialised:
             self.init_board()
 
@@ -45,15 +46,17 @@ class Board:
         """
         Initializes the board with the triangular matrices for each player at opposite corners.
         """
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                # Define small triangular matrix function
-                #   with dimensions triangle_size • triangle_size
-                if j + i < self.triangle_size:
-                    # Translate triangular matrix bottom-left corner
-                    self.place_pegs(1, [(self.board_size - 1 - i, j)])
-                    # Translate triangular matrix top-right corner
-                    self.place_pegs(2, [(i, self.board_size - 1 - j)])
+        # for i in range(self.triangle_size):
+        #     for j in range(self.triangle_size):
+        #         # Define small triangular matrix function
+        #         #   with dimensions triangle_size • triangle_size
+        #         if j + i < self.triangle_size:
+        #             # Translate triangular matrix bottom-left corner
+        #             self.place_pegs(1, [(self.board_size - 1 - i, j)])
+        #             # Translate triangular matrix top-right corner
+        #             self.place_pegs(2, [(i, self.board_size - 1 - j)])
+        self.matrix[self.corner_triangles[0][:, 0], self.corner_triangles[0][:, 1]] = 1
+        self.matrix[self.corner_triangles[1][:, 0], self.corner_triangles[1][:, 1]] = 2
 
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
@@ -69,48 +72,47 @@ class Board:
                 if self.within_bounds(dest):
                     yield dest
 
-    def is_top_filled(self) -> bool:
+    def is_cornered_pegs(self, corner: str) -> bool:
         """
-        Checks if the top-right corner of the board is filled with pegs.
+        Checks if the corner is filled with pegs of any type.
+        :param corner: string indicating the corner to be checked ('bottom' or 'top')
         :return: boolean value
         """
-        return all(self.matrix[pair] != 0 for pair in _top_right_corner_coords(self.triangle_size, self.board_size))
+        if corner == 'bottom':
+            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+        else:  # corner == 'top'
+            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
+        return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] != 0)
 
-    def is_bottom_filled(self) -> bool:
+    def is_cornered_with(self, corner: str, value: int) -> bool:
         """
-        Checks if the bottom-left corner of the board is filled with pegs.
+        Checks if the corner is filled with pegs of a specific value.
+        :param corner: string indicating the corner to be checked ('bottom' or 'top')
+        :param value: specific value to be checked for in the matrix
         :return: boolean value
         """
-        return all(self.matrix[pair] != 0 for pair in _bot_left_corner_coords(self.triangle_size, self.board_size))
+        if corner == 'bottom':
+            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+        else:  # corner == 'top'
+            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
 
-    def is_top_filled_with(self, value: int) -> bool:
+        return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] == value)
+
+    def is_top_right_terminal(self) -> bool:
         """
-        Checks if the top-right corner of the board is filled with pegs of a specific value.
-        :param value: value of peg searching for in the top-right corner
+        Checks if the top-right corner is terminal for player 1.
+        :return:
+        """
+        return (self.is_cornered_pegs('top') and  # Initial config has TOP with 2's
+                not self.is_cornered_with('top', 2))
+
+    def is_bot_left_terminal(self) -> bool:
+        """
+        Checks if the bottom-left corner is terminal for player 2.
         :return: boolean value
         """
-        return all(self.matrix[pair] == value for pair in _top_right_corner_coords(self.triangle_size, self.board_size))
-
-    def is_bottom_filled_with(self, value: int) -> bool:
-        """
-        Checks if the bottom-left corner of the board is filled with pegs of a specific value.
-        :param value: value of peg searching for in the bottom-left corner
-        :return: boolean value
-        """
-        return all(self.matrix[pair] == value for pair in _bot_left_corner_coords(self.triangle_size, self.board_size))
-
-    def is_cornered(self, corner: str, value: int) -> bool:
-        if corner == 'top':
-            check_condition = lambda i, j: self.matrix[i][self.board_size - 1 - j] != value
-        else:  # corner == 'bottom'
-            check_condition = lambda i, j: self.matrix[self.board_size - 1 - i][j] != value
-
-        for i in range(self.triangle_size):
-            for j in range(self.triangle_size):
-                if i + j < self.triangle_size:
-                    if check_condition(i, j):
-                        return False
-        return True
+        return (self.is_cornered_pegs('bottom') and  # Initial config has BOTTOM with 1's
+                not self.is_cornered_with('bottom', 1))
 
     def move(self, initial_pos: Tuple[int, int], path: Tuple[int, int]):
         current_x, current_y = initial_pos

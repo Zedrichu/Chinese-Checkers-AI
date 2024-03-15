@@ -1,12 +1,12 @@
 import unittest
 
-from Action import Action
-from Board import Board
-from ChineseCheckers import ChineseCheckers
-from Step import Step
+from game.Action import Action
+from game.Board import Board
+from game_problem.ChineseCheckers import ChineseCheckers
+from game.Step import Step
 
 
-class TestTerminalState(unittest.TestCase):
+class TestValidActions(unittest.TestCase):
     def test_actions_should_detect_moves_to_adjacent_cells(self):
         """
            0  1  2  3  4
@@ -19,7 +19,7 @@ class TestTerminalState(unittest.TestCase):
         board = Board(triangle_size=2, initialised=False)
         board.place_pegs(player_id=1, destinations=[(2, 2)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -44,7 +44,7 @@ class TestTerminalState(unittest.TestCase):
         board = Board(triangle_size=2, initialised=False)
         board.place_pegs(player_id=1, destinations=[(1, 1), (2, 2)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -65,7 +65,7 @@ class TestTerminalState(unittest.TestCase):
         board.place_pegs(1, [(2, 2)])
         board.place_pegs(2, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -92,7 +92,7 @@ class TestTerminalState(unittest.TestCase):
         board.place_pegs(2, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
         board.place_pegs(2, [(0, 0), (0, 2), (2, 0), (2, 4), (4, 2), (4, 4)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
