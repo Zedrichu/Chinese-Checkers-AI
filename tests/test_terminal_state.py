@@ -7,7 +7,7 @@ from src.game_problem.ChineseCheckers import ChineseCheckers
 class TestTerminalState(unittest.TestCase):
     def test_terminal_test_on_initial_state(self):
         sut = ChineseCheckers(3)
-        state = sut.initial_state
+        state = sut.initial_state()
 
         self.assertFalse(sut.terminal_test(state))
 
@@ -21,14 +21,14 @@ class TestTerminalState(unittest.TestCase):
         4  1  1  .  .  .
         """
         sut = ChineseCheckers(triangle_size=2)
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board.move((3, 0), (2, 0))
 
         self.assertFalse(sut.terminal_test(state))
 
     def test_terminal_test_on_bottom_corner_filled_with_all_opponents(self):
         sut = ChineseCheckers(triangle_size=2)
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board.matrix = np.array([
             [0, 0, 0, 0, 1],
             [0, 0, 0, 0, 1],
@@ -41,7 +41,7 @@ class TestTerminalState(unittest.TestCase):
 
     def test_terminal_test_on_top_corner_filled_with_all_opponents(self):
         sut = ChineseCheckers(triangle_size=2)
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board.matrix = np.array([
             [0, 0, 0, 1, 1],
             [0, 0, 0, 0, 1],
@@ -54,7 +54,7 @@ class TestTerminalState(unittest.TestCase):
 
     def test_terminal_test_bottom_corner(self):
         sut = ChineseCheckers(triangle_size=2)
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board.matrix = np.array([
             [0, 0, 1, 0, 1],
             [0, 0, 0, 0, 1],

@@ -19,7 +19,7 @@ class TestValidActions(unittest.TestCase):
         board = Board(triangle_size=2, initialised=False)
         board.place_pegs(player_id=1, destinations=[(2, 2)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -44,7 +44,7 @@ class TestValidActions(unittest.TestCase):
         board = Board(triangle_size=2, initialised=False)
         board.place_pegs(player_id=1, destinations=[(1, 1), (2, 2)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -65,7 +65,7 @@ class TestValidActions(unittest.TestCase):
         board.place_pegs(1, [(2, 2)])
         board.place_pegs(2, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
@@ -92,7 +92,7 @@ class TestValidActions(unittest.TestCase):
         board.place_pegs(2, [(1, 1), (1, 2), (2, 1), (2, 3), (3, 2), (3, 3)])
         board.place_pegs(2, [(0, 0), (0, 2), (2, 0), (2, 4), (4, 2), (4, 4)])
         sut = ChineseCheckers()
-        state = sut.initial_state
+        state = sut.initial_state()
         state.board = board
 
         actions = list(sut.actions(state))
