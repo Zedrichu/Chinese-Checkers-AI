@@ -58,45 +58,6 @@ class Board:
         self.matrix[self.corner_triangles[0][:, 0], self.corner_triangles[0][:, 1]] = 1
         self.matrix[self.corner_triangles[1][:, 0], self.corner_triangles[1][:, 1]] = 2
 
-    @cached_property
-    def initial_avg_euclidean(self):
-        """
-        Returns the average Euclidian distance between the two initial corner triangles
-        :return: mean of Euclidian distances
-        """
-        diffs = self.corner_triangles[0] - [0, self.board_size - 1]
-        distances = np.linalg.norm(diffs, axis=1)
-        return np.mean(distances)
-
-    def average_euclidean_to_corner(self, player) -> float:
-        if player == 1:
-            corner = [0, self.board_size - 1]
-        else:
-            corner = [self.board_size - 1, 0]
-
-        indices = np.argwhere(self.matrix == player)
-        distances = np.linalg.norm(indices - corner, axis=1)
-        return np.mean(distances)
-
-    def average_manhattan_to_corner(self, player) -> float:
-        if player == 1:
-            corner = [0, self.board_size - 1]
-        else:
-            corner = [self.board_size - 1, 0]
-
-        indices = np.argwhere(self.matrix == player)
-        distances = np.sum(np.abs(indices - corner), axis=1)
-        return np.mean(distances)
-
-    def sum_player_pegs(self, player: int) -> float:
-        """
-        Returns the sum of pegs in the corner triangles for a specific player.
-        :param player: int
-        :return:
-        """
-        corner = self.corner_triangles[2 - player]  # 1-indexed player
-        return np.sum(self.matrix[corner[:, 0], corner[:, 1]] == player)
-
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
         Returns a list of diamond-adjacent cells to the specific cell.
