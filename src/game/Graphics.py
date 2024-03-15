@@ -10,7 +10,7 @@ from game.State import State
 CIRCLE_RADIUS = 25
 TILE_SIZE = 50
 OFFSET = TILE_SIZE // 2
-RESOLUTION = 720
+RESOLUTION = 1080
 
 # Rectangles in which the game is split
 # 1. Game
@@ -263,3 +263,17 @@ class Graphics:
                            color=pg.Color('white'),
                            center=center_position,
                            radius=CIRCLE_RADIUS)
+
+    def draw_end_game(self, player: int, utility: int):
+        """
+        Draw the end turn button with text
+        """
+        button_color_normal = (171, 148, 126)
+        button_color_hover = (111, 94, 83)
+        text_color = (89, 61, 59)
+        if utility == 1:
+            screen_text = f"Player {player}|{self.colors[player - 1]} wins!"
+        else:
+            screen_text = f"Player {player}|{self.colors[player - 1]} lost!"
+
+        # Draw the end game screen #TODO: make it look better
