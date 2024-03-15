@@ -12,16 +12,16 @@ class GameController:
         self.problem = ChineseCheckers(triangle_size=3)
         self.gui = Graphics()
         # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
-        self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 6)]
+        self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 8)]
 
     def game_loop(self):
-        state = self.problem.initial_state
+        state = self.problem.initial_state()
 
         while not self.problem.terminal_test(state):
             action = self.players[state.player - 1].get_action(self.problem, state)
+            print(f'Player {state.player} | applied action: {action}')
             state = self.problem.result(state, action)
 
-            print(f'Action applied: {action}')
             print(state)
 
             self.gui.handle_quit()
