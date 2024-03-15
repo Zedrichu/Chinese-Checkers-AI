@@ -9,7 +9,7 @@ from game.Graphics import Graphics
 
 class GameController:
     def __init__(self):
-        self.problem = ChineseCheckers(triangle_size=4)
+        self.problem = ChineseCheckers(triangle_size=3)
         self.gui = Graphics()
         # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
         self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6)]
@@ -24,10 +24,12 @@ class GameController:
 
             print(state)
 
+            time.sleep(0.01)
+
             self.gui.handle_quit()
             self.gui.draw_everything(state)
 
-            time.sleep(0.1)
+            time.sleep(0.01)
 
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
         #TODO: Proper winning graphics

@@ -10,7 +10,7 @@ from game.State import State
 CIRCLE_RADIUS = 25
 TILE_SIZE = 50
 OFFSET = TILE_SIZE // 2
-RESOLUTION = 1080
+RESOLUTION = 720
 
 # Rectangles in which the game is split
 # 1. Game
@@ -19,8 +19,6 @@ game_rect = pg.Rect(0, 0, RESOLUTION, RESOLUTION - 50)
 turn_rect = pg.Rect((0, RESOLUTION - 50, 720, 50))
 # 3. End-turn button
 end_turn_rect = pg.Rect(RESOLUTION - 150, RESOLUTION - 150, 120, 50)
-
-
 
 
 # Method to find the circle that the mouse is hovering over
@@ -39,6 +37,7 @@ def find_circle(self, mouse, board_size: int):
             if distance <= CIRCLE_RADIUS:
                 return i, j
     return None
+
 
 # Method to find if the mouse is hovering over the end-turn button
 def find_button(mouse):
