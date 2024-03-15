@@ -101,7 +101,6 @@ class MinimaxAIPlayer(Player):
         for action in valid_actions:
             child = self.prob.result(state, action)
             if child in self.state_history:
-                print('Skipping \n\n\n\n\n\n')
                 continue
             if self.prob.player(child) == self.MAX_PLAYER:
                 res, sub_action = self.max_value(child, depth + 1, alpha, beta)
