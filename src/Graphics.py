@@ -25,15 +25,13 @@ end_turn_rect = pg.Rect(RESOLUTION - 150, RESOLUTION - 150, 120, 50)
 
 
 # Method to find the circle that the mouse is hovering over
-def find_circle(mouse, board_size: int):
+def find_circle(self, mouse, board_size: int):
     # Compute the tile position - swap mouse coordinates
     # x and y are swapped because of the way the board is drawn, and board is to be fixed
     for i in range(board_size):
         for j in range(board_size):
             # Calculate the center of each circle
-            x_float = ((RESOLUTION // 2 + (i + j) * TILE_SIZE + OFFSET * 2) - RESOLUTION // 2)
-            y_float = (RESOLUTION // 2 + (i - j) * TILE_SIZE) - OFFSET
-            center_position = (x_float, y_float)
+            center_position = self.get_center_position(i, j)
 
             # Calculate the distance between the mouse and the center of the circle
             distance = ((mouse[0] - center_position[0]) ** 2 + (mouse[1] - center_position[1]) ** 2) ** 0.5
@@ -205,7 +203,7 @@ class Graphics:
     # Method is not used in the current version of the game
     def click(self, state: State, actions: List[Action]):
         mouse = self.pg.mouse.get_pos()
-        pair = find_circle(mouse, state.board.board_size)
+        pair = find_circle(self, mouse, state.board.board_size)
 
         if pair is None or not state.board.within_bounds((pair[0], pair[1])):
             return
@@ -248,7 +246,7 @@ class Graphics:
         self.selected_action = Action(state.peg, state.peg, Step.END)
 
     def hover(self, state: State):
-        pair = find_circle(self.pg.mouse.get_pos(), state.board.board_size)
+        pair = find_circle(self,self.pg.mouse.get_pos(), state.board.board_size)
 
         if pair is None or not state.board.within_bounds((pair[0], pair[1])):
             return
