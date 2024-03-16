@@ -2,4 +2,5 @@ from GameController import GameController
 
 
 if __name__ == "__main__":
-    GameController().game_loop()
+    controller = GameController(verbose=False, use_graphics=False)
+    controller.game_loop()
