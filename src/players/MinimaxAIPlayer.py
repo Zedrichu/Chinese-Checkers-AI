@@ -130,6 +130,24 @@ class MinimaxAIPlayer(Player):
 
         weights = [0.1, 0.3, 0.4, 0.2]  # Sum must be always equal ~ 1
 
+        # 1st benchmark
+        # weights = [0.3, 0.4, 0.2, 0.1]
+
+        # 2nd benchmark
+        # weights = [0.4, 0.2, 0.1, 0.3]
+
+        # 3rd benchmark - Only including the first heuristic
+        # weights = [1, 0, 0, 0]
+
+        # 4th benchmark - Only including the second heuristic
+        # weights = [0, 1, 0, 0]
+
+        # 5th benchmark - Only including the third heuristic
+        # weights = [0, 0, 1, 0]
+
+        # 6th benchmark - Only including the fourth heuristic
+        # weights = [0, 0, 0, 1]
+
         peg_count = (state.board.triangle_size - 1) * state.board.triangle_size / 2
         initial_euclidean = initial_avg_euclidean(state.board)
 

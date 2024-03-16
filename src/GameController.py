@@ -10,9 +10,9 @@ from game.Graphics import Graphics
 class GameController:
     def __init__(self):
         self.problem = ChineseCheckers(triangle_size=3)
-        self.gui = Graphics()
+        # self.gui = Graphics()
         # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
-        self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6)]
+        self.players = [MinimaxAIPlayer(self.problem, 1, 6), MinimaxAIPlayer(self.problem, 2, 6)]
 
     def game_loop(self):
         state = self.problem.initial_state()
@@ -22,13 +22,12 @@ class GameController:
             action = self.players[state.player - 1].get_action(self.problem, state)
             print(f'Player {state.player} | applied action: {action}')
             state = self.problem.result(state, action)
-
             print(state)
 
             time.sleep(0.01)
 
-            self.gui.handle_quit()
-            self.gui.draw_everything(state)
+            # self.gui.handle_quit()
+            # self.gui.draw_everything(state)
 
             time.sleep(0.01)
 
