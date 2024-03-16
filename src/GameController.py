@@ -33,6 +33,7 @@ class GameController:
             if self.verbose or turn % 10 == 0:
                 print(f'Player {state.player} | applied action: {action} | turn = {turn}')
                 print(state)
+                print('\n\n')
 
             if self.gui:
                 self.gui.handle_quit()
