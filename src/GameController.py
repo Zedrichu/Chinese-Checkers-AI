@@ -40,6 +40,8 @@ class GameController:
 
             turn += 1
 
+        print(f'Final state:\n{state}')
+
         game_duration = time.perf_counter() - game_start_timer
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
 
