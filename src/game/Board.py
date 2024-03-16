@@ -15,6 +15,8 @@ def _top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((i, board_size - 1 - j))
+    corner = (0, board_size - 1)
+    res.sort(key=lambda p: (p[0] - corner[0]) ** 2 + (p[1] - corner[1]) ** 2)
     return np.array(res)
 
 
@@ -29,6 +31,8 @@ def _bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
         for j in range(triangle_size):
             if i + j < triangle_size:
                 res.append((board_size - 1 - i, j))
+    corner = (board_size - 1, 0)
+    res.sort(key=lambda p: (p[0] - corner[0]) ** 2 + (p[1] - corner[1]) ** 2)
     return np.array(res)
 
 

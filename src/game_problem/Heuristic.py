@@ -40,6 +40,11 @@ def max_manhattan_to_corner(board: Board, player: int) -> float:
 
 
 def decide_goal_corner_coordinates(board: Board, player: int):
+    for pair in board.corner_triangles[2 - player]:
+        if board.matrix[pair[0], pair[1]] == 0:
+            return pair
+
+    # Base case
     if player == 1:
         corner = [0, board.board_size - 1]
     else:

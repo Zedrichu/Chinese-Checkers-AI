@@ -33,12 +33,15 @@ class GameController:
             if self.verbose or turn % 10 == 0:
                 print(f'Player {state.player} | applied action: {action} | turn = {turn}')
                 print(state)
+                print('\n\n')
 
             if self.gui:
                 self.gui.handle_quit()
                 self.gui.draw_everything(state)
 
             turn += 1
+
+        print(f'Final state:\n{state}')
 
         game_duration = time.perf_counter() - game_start_timer
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
