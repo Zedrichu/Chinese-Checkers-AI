@@ -44,7 +44,9 @@ class GameController:
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
 
         print(f'Game elapsed time: {game_duration:0.8f} | Turns = {turn}')
-        print(f'Player 1 average time: {self.players[0].average_time_spent_on_actions:0.8f}')
-        print(f'Player 1 move count: {self.players[0].moves_count:0.8f}')
-        print(f'Player 2 average time: {self.players[1].average_time_spent_on_actions:0.8f}')
-        print(f'Player 2 move count: {self.players[1].moves_count:0.8f}')
+        for i, player in enumerate(self.players):
+            print('-----')
+            print(f'Player {i + 1} average time: {player.average_time_spent_on_actions:0.8f}')
+            print(f'Player {i + 1} move count: {player.moves_count:0.8f}')
+            if hasattr(player, 'evaluated_states_count'):
+                print(f'Player {i + 1} expanded states: {player.evaluated_states_count}')

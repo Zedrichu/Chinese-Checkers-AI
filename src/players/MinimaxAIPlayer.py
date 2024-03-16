@@ -23,6 +23,9 @@ class MinimaxAIPlayer(Player):
         self.MAX_PLAYER = max_player
         self.max_depth = max_depth
 
+        # Counter for the evaluated states
+        self.evaluated_states_count = 0
+
         # set.pop() - removes a random element from the set
         # Therefore, an additional queue is used to remember which element is the oldest
         self.history_size = history_size
@@ -127,6 +130,8 @@ class MinimaxAIPlayer(Player):
         return c + 1
 
     def eval_state(self, state: State, player: int) -> float:
+        self.evaluated_states_count += 1
+
         if self.prob.terminal_test(state):
             return self.prob.utility(state, player)
 
