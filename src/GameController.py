@@ -16,6 +16,7 @@ class GameController:
 
     def game_loop(self):
         state = self.problem.initial_state()
+        game_start_timer = time.perf_counter()
 
         while not self.problem.terminal_test(state):
             action = self.players[state.player - 1].get_action(self.problem, state)
@@ -31,5 +32,9 @@ class GameController:
 
             time.sleep(0.01)
 
+        game_duration = time.perf_counter() - game_start_timer
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
-        #TODO: Proper winning graphics
+
+        print(f'Game elapsed time: {game_duration:0.8f}')
+        print(f'Player 1 average time: {self.players[0].average_time_spent_on_actions:0.8f}')
+        print(f'Player 2 average time: {self.players[1].average_time_spent_on_actions:0.8f}')
