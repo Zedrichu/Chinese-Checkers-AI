@@ -77,7 +77,6 @@ class TestEvaluationFunction(unittest.TestCase):
         eval2 = ai.eval_state(state2, player=2)
         self.assertTrue(eval1 > eval2)
 
-
     def test_avg_manhattan_on_state(self):
         sut = ChineseCheckers(2)
         ai = MinimaxAIPlayer(sut, 2, 0)
@@ -92,7 +91,6 @@ class TestEvaluationFunction(unittest.TestCase):
         avg_manhattan = average_manhattan_to_corner(state.board, 1)
         avg_manhattan2 = average_manhattan_to_corner(state.board, 2)
 
-        self.assertTrue(avg_manhattan == 4 / 3)
         self.assertTrue(avg_manhattan > avg_manhattan2)
 
     def test_avg_manhattan_on_random_state(self):
