@@ -1,6 +1,7 @@
 import numpy as np
 
 from game import Board
+from game.Board import bot_left_corner_coords, top_right_corner_coords
 
 """
 Utility functions for evaluation of board states.
@@ -20,7 +21,8 @@ def initial_avg_euclidean(board: Board):
     Returns the average Euclidian distance between the two initial corner triangles
     :return: mean of Euclidian distances
     """
-    diffs = board.corner_triangles[0] - [0, board.board_size - 1]
+    bottom_corner = bot_left_corner_coords(board.triangle_size, board.board_size)
+    diffs = bottom_corner - [0, board.board_size - 1]
     distances = np.linalg.norm(diffs, axis=1)
     return np.mean(distances)
 
@@ -40,7 +42,11 @@ def max_manhattan_to_corner(board: Board, player: int) -> float:
 
 
 def decide_goal_corner_coordinates(board: Board, player: int):
-    for pair in board.corner_triangles[2 - player]:
+    if player == 1:
+        corner = top_right_corner_coords(board.triangle_size, board.board_size)
+    else:
+        corner = bot_left_corner_coords(board.triangle_size, board.board_size)
+    for pair in corner:
         if board.matrix[pair[0], pair[1]] == 0:
             return pair
 
@@ -59,5 +65,8 @@ def sum_player_pegs(board: Board, player: int) -> float:
     :param player: int
     :return:
     """
-    corner = board.corner_triangles[2 - player]  # 1-indexed player
+    if player == 1:
+        corner = top_right_corner_coords(board.triangle_size, board.board_size)
+    else:
+        corner = bot_left_corner_coords(board.triangle_size, board.board_size)
     return np.sum(board.matrix[corner[:, 0], corner[:, 1]] == player)
