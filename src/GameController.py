@@ -37,4 +37,6 @@ class GameController:
 
         print(f'Game elapsed time: {game_duration:0.8f}')
         print(f'Player 1 average time: {self.players[0].average_time_spent_on_actions:0.8f}')
+        print(f'Player 1 move count: {self.players[0].moves_count:0.8f}')
         print(f'Player 2 average time: {self.players[1].average_time_spent_on_actions:0.8f}')
+        print(f'Player 2 move count: {self.players[1].moves_count:0.8f}')

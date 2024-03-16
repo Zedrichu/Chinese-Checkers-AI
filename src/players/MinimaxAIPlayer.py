@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import sys
 import time
+from collections import deque
 from typing import Tuple, Optional
 
 from game.Action import Action
@@ -20,8 +21,12 @@ class MinimaxAIPlayer(Player):
         self.prob = problem
         self.MAX_PLAYER = max_player
         self.max_depth = max_depth
-        self.state_history = set()
-        self.HISTORY = history_size
+
+        # set.pop() - removes a random element from the set
+        # Therefore, an additional queue is used to remember which element is the oldest
+        self.history_size = history_size
+        self._state_history_set = set()
+        self._state_history_queue = deque()
 
     @property
     def average_time_spent_on_actions(self) -> float:
@@ -39,12 +44,7 @@ class MinimaxAIPlayer(Player):
         # score, action = results.get()
 
         timer = time.perf_counter()
-
         action = self.alpha_beta_search(state)
-        if len(self.state_history) > self.HISTORY:
-            self.state_history.pop()
-        print(self.state_history)
-        print(action)
 
         elapsed_time = time.perf_counter() - timer
         self._total_time_spent_on_taking_actions += elapsed_time
@@ -52,7 +52,7 @@ class MinimaxAIPlayer(Player):
         return action
 
     def alpha_beta_search(self, state: State) -> Action:
-        self.state_history.add(state)
+        self._add_state_to_history(state)
         alpha = float('-inf')
         beta = float('inf')
         best_val, best_action = self.max_value(state, 0, alpha, beta)
@@ -74,7 +74,7 @@ class MinimaxAIPlayer(Player):
 
         for action in valid_actions:
             child = self.prob.result(state, action)
-            if child in self.state_history:
+            if self._state_is_in_history(child):
                 continue
             if self.prob.player(child) == self.MAX_PLAYER:
                 res, sub_action = self.max_value(child, depth + 1, alpha, beta)
@@ -106,7 +106,7 @@ class MinimaxAIPlayer(Player):
 
         for action in valid_actions:
             child = self.prob.result(state, action)
-            if child in self.state_history:
+            if self._state_is_in_history(child):
                 continue
             if self.prob.player(child) == self.MAX_PLAYER:
                 res, sub_action = self.max_value(child, depth + 1, alpha, beta)
@@ -154,3 +154,15 @@ class MinimaxAIPlayer(Player):
     def cutoff_test(self, state: State, depth: int) -> bool:
         return self.prob.terminal_test(state) or depth == self.max_depth
 
+    def _add_state_to_history(self, state: State):
+        # state_value = state
+        state_value = hash(state)
+
+        self._state_history_set.add(state_value)
+        self._state_history_queue.append(state_value)
+        if len(self._state_history_set) > self.history_size:
+            removed_value = self._state_history_queue.popleft()
+            self._state_history_set.remove(removed_value)
+
+    def _state_is_in_history(self, state: State):
+        return hash(state) in self._state_history_set

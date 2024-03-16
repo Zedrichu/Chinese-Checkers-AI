@@ -17,3 +17,7 @@ class Player(ABC):
     @property
     def average_time_spent_on_actions(self) -> float:
         return self._total_time_spent_on_taking_actions / self._moves_count
+
+    @property
+    def moves_count(self):
+        return int(self._moves_count)
