@@ -14,10 +14,11 @@ sys.setrecursionlimit(2000)
 
 
 class MinimaxAIPlayer(Player):
-    def __init__(self, problem: GameProblem, max_player: int, max_depth: int = 8, history_size: int = 10):
+    def __init__(self, problem: GameProblem, max_player: int, max_depth: int = 8, history_size: int = 10, verbose=True):
         # Sets up multiprocessing
         super().__init__()
         mp.freeze_support()
+        self.verbose = verbose
         self.prob = problem
         self.MAX_PLAYER = max_player
         self.max_depth = max_depth
@@ -56,7 +57,8 @@ class MinimaxAIPlayer(Player):
         alpha = float('-inf')
         beta = float('inf')
         best_val, best_action = self.max_value(state, 0, alpha, beta)
-        print(list(self.prob.actions(state)))
+        if self.verbose:
+            print(list(self.prob.actions(state)))
         return best_action
 
     def max_value(self, state: State, depth: int, alpha: float, beta: float) -> Tuple[float, Optional[Action]]:
@@ -88,7 +90,7 @@ class MinimaxAIPlayer(Player):
                 alpha = max(alpha, res)
             if max_eval >= beta:
                 break
-        if depth == 0:
+        if self.verbose and depth == 0:
             print(tuples)
         return max_eval, best_action
 
