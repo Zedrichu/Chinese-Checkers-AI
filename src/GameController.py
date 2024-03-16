@@ -15,11 +15,11 @@ class GameController:
         self.problem = ChineseCheckers(triangle_size=3)
         self.gui = Graphics() if use_graphics else None
         # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
-        # self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
-        self.players = [
-            MinimaxAIPlayer(self.problem, 1, 6, verbose=verbose),
-            MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)
-        ]
+        self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
+        # self.players = [
+        #     MinimaxAIPlayer(self.problem, 1, 6, verbose=verbose),
+        #     MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)
+        # ]
 
     def game_loop(self):
         state = self.problem.initial_state()

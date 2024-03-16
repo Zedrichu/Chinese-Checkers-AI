@@ -5,7 +5,7 @@ import numpy as np
 
 
 @cache
-def _top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
+def top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the top-right corner of the board.
     :return: list of coordinate pairs
@@ -21,7 +21,7 @@ def _top_right_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
 
 
 @cache
-def _bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
+def bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
     """
     Returns the coordinates of the bottom-left corner of the board.
     :return: list of coordinate pairs
@@ -41,8 +41,6 @@ class Board:
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
         self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-        self.corner_triangles = [_bot_left_corner_coords(self.triangle_size, self.board_size),
-                                 _top_right_corner_coords(self.triangle_size, self.board_size)]
         if initialised:
             self.init_board()
 
@@ -50,17 +48,11 @@ class Board:
         """
         Initializes the board with the triangular matrices for each player at opposite corners.
         """
-        # for i in range(self.triangle_size):
-        #     for j in range(self.triangle_size):
-        #         # Define small triangular matrix function
-        #         #   with dimensions triangle_size • triangle_size
-        #         if j + i < self.triangle_size:
-        #             # Translate triangular matrix bottom-left corner
-        #             self.place_pegs(1, [(self.board_size - 1 - i, j)])
-        #             # Translate triangular matrix top-right corner
-        #             self.place_pegs(2, [(i, self.board_size - 1 - j)])
-        self.matrix[self.corner_triangles[0][:, 0], self.corner_triangles[0][:, 1]] = 1
-        self.matrix[self.corner_triangles[1][:, 0], self.corner_triangles[1][:, 1]] = 2
+        bottom_corner = bot_left_corner_coords(self.triangle_size, self.board_size)
+        top_corner = top_right_corner_coords(self.triangle_size, self.board_size)
+
+        self.matrix[bottom_corner[:, 0], bottom_corner[:, 1]] = 1
+        self.matrix[top_corner[:, 0], top_corner[:, 1]] = 2
 
     def adjacent_cells(self, src: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
@@ -83,9 +75,9 @@ class Board:
         :return: boolean value
         """
         if corner == 'bottom':
-            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+            np_corner = bot_left_corner_coords(self.triangle_size, self.board_size)
         else:  # corner == 'top'
-            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
+            np_corner = top_right_corner_coords(self.triangle_size, self.board_size)
         return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] != 0)
 
     def is_cornered_with(self, corner: str, value: int) -> bool:
@@ -96,9 +88,9 @@ class Board:
         :return: boolean value
         """
         if corner == 'bottom':
-            np_corner = _bot_left_corner_coords(self.triangle_size, self.board_size)
+            np_corner = bot_left_corner_coords(self.triangle_size, self.board_size)
         else:  # corner == 'top'
-            np_corner = _top_right_corner_coords(self.triangle_size, self.board_size)
+            np_corner = top_right_corner_coords(self.triangle_size, self.board_size)
 
         return np.all(self.matrix[np_corner[:, 0], np_corner[:, 1]] == value)
 
