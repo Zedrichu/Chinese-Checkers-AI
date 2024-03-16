@@ -1,5 +1,6 @@
 import time
 
+from players.NonRepeatRandomPlayer import NonRepeatingRandomPlayer
 from players.GraphicsHumanPlayer import GraphicsHumanPlayer
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 from players.RandomPlayer import RandomPlayer
@@ -8,18 +9,32 @@ from game.Graphics import Graphics
 
 
 class GameController:
-    def __init__(self, verbose=True, use_graphics=True):
+    def __init__(self, verbose=True, use_graphics=True, args=None):
         self.verbose = verbose
         self.use_graphics = use_graphics
-
         self.problem = ChineseCheckers(triangle_size=3)
         self.gui = Graphics() if use_graphics else None
-        # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
-        # self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
-        self.players = [
-            MinimaxAIPlayer(self.problem, 1, 6, verbose=verbose),
-            MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)
-        ]
+        self.players = []
+        self.handle_game_setup(args)
+
+    def handle_game_setup(self, args):
+        if args is None:
+            self.players = [
+                MinimaxAIPlayer(self.problem, 1, 6, verbose=self.verbose),
+                MinimaxAIPlayer(self.problem, 2, 6, verbose=self.verbose)
+            ]
+        else:
+            if args.first_human:
+                self.players.append(GraphicsHumanPlayer(self.gui))
+            elif args.first_minmax is not None:
+                self.players.append(MinimaxAIPlayer(self.problem, 1, args.first_minmax, verbose=self.verbose))
+
+            if args.second_rand:
+                self.players.append(RandomPlayer())
+            elif args.second_noreprand:
+                self.players.append(NonRepeatingRandomPlayer())
+            elif args.second_minmax is not None:
+                self.players.append(MinimaxAIPlayer(self.problem, 2, args.second_minmax, verbose=self.verbose))
 
     def game_loop(self):
         state = self.problem.initial_state()
