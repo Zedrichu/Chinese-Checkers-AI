@@ -1,5 +1,4 @@
 import numpy as np
-from functools import cached_property
 
 from game import Board
 

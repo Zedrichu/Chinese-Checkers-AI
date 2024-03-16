@@ -1,13 +1,10 @@
 import multiprocessing as mp
-import time
 import sys
-from functools import cached_property
+import time
 from typing import Tuple, Optional
 
-import numpy as np
-
-from game.State import State
 from game.Action import Action
+from game.State import State
 from game_problem import GameProblem
 from game_problem.Heuristic import *
 from players.Player import Player
@@ -16,15 +13,19 @@ sys.setrecursionlimit(2000)
 
 
 class MinimaxAIPlayer(Player):
-
-    def __init__(self, problem: GameProblem, max_player: int,  max_depth: int = 8, history_size: int = 10):
+    def __init__(self, problem: GameProblem, max_player: int, max_depth: int = 8, history_size: int = 10):
         # Sets up multiprocessing
+        super().__init__()
         mp.freeze_support()
         self.prob = problem
         self.MAX_PLAYER = max_player
         self.max_depth = max_depth
         self.state_history = set()
         self.HISTORY = history_size
+
+    @property
+    def average_time_spent_on_actions(self) -> float:
+        return self._total_time_spent_on_taking_actions / self._moves_count
 
     def get_action(self, problem: GameProblem, state: State) -> Action:
         # # Prepare thread pool
@@ -36,14 +37,19 @@ class MinimaxAIPlayer(Player):
         # pool.close()
         # pool.join()
         # score, action = results.get()
+
+        timer = time.perf_counter()
+
         action = self.alpha_beta_search(state)
-        if self.state_history.__len__() > self.HISTORY:
+        if len(self.state_history) > self.HISTORY:
             self.state_history.pop()
         print(self.state_history)
         print(action)
-        return action
 
-        # self.minimax_alpha_beta, args=(self.prob, state, depth=8, -inf, +inf, self.state.player)
+        elapsed_time = time.perf_counter() - timer
+        self._total_time_spent_on_taking_actions += elapsed_time
+        self._moves_count += 1
+        return action
 
     def alpha_beta_search(self, state: State) -> Action:
         self.state_history.add(state)
@@ -146,6 +152,5 @@ class MinimaxAIPlayer(Player):
         return heuristic1 + heuristic2 + heuristic3 + heuristic4
 
     def cutoff_test(self, state: State, depth: int) -> bool:
-        if self.prob.terminal_test(state) or depth == self.max_depth:
-            return True
-        return False
+        return self.prob.terminal_test(state) or depth == self.max_depth
+
