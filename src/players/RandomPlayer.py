@@ -11,6 +11,11 @@ class RandomPlayer(Player):
     """
     Random player (confused AI) - selects an action randomly from the list of valid actions
     """
+
+    def __init__(self):
+        super().__init__()
+        self._player_type = 'random'
+
     def get_action(self, problem: GameProblem, state: State) -> Action:
         timer = time.perf_counter()
 

@@ -1,0 +1,70 @@
+{
+    "games": [
+        {
+            "game_duration": 2.4415015410631895,
+            "total_turns": 129,
+            "players": [
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.002910146207289129,
+                    "move_count": 61,
+                    "expanded_states": 2408,
+                    "max_depth": 2,
+                    "player_id": 1
+                },
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.02693444926647798,
+                    "move_count": 68,
+                    "expanded_states": 28215,
+                    "max_depth": 4,
+                    "player_id": 2
+                }
+            ]
+        },
+        {
+            "game_duration": 4.5904443331528455,
+            "total_turns": 129,
+            "players": [
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.029867485394114972,
+                    "move_count": 54,
+                    "expanded_states": 24515,
+                    "max_depth": 4,
+                    "player_id": 1
+                },
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.021879869500796,
+                    "move_count": 75,
+                    "expanded_states": 24830,
+                    "max_depth": 4,
+                    "player_id": 2
+                }
+            ]
+        },
+        {
+            "game_duration": 1.0762333329766989,
+            "total_turns": 119,
+            "players": [
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.002952579141128808,
+                    "move_count": 60,
+                    "expanded_states": 2361,
+                    "max_depth": 2,
+                    "player_id": 1
+                },
+                {
+                    "player_type": "minimax",
+                    "average_time_per_action": 0.0029666391438094237,
+                    "move_count": 59,
+                    "expanded_states": 2342,
+                    "max_depth": 2,
+                    "player_id": 2
+                }
+            ]
+        }
+    ]
+}

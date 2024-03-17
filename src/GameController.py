@@ -1,5 +1,6 @@
 import time
 
+from benchmarking.GameAnalytics import GameAnalytics
 from players.NonRepeatRandomPlayer import NonRepeatingRandomPlayer
 from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
     AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic
@@ -25,6 +26,7 @@ def create_player(player_type, depth=6, gui=None, problem=None, max_player=None,
 
 class GameController:
     def __init__(self, verbose=True, use_graphics=True, args=None):
+        self.analytics = GameAnalytics()
         self.verbose = verbose  # Flag to print the state and action applied
         self.use_graphics = use_graphics  # Flag to use the GUI
         self.problem = ChineseCheckers(triangle_size=3)  # Initialize the game problem
@@ -42,8 +44,8 @@ class GameController:
 
         if args.first_player is None or args.second_player is None:
             self.players = [
-                MinimaxAIPlayer(self.problem, 1, 6, heuristic, verbose=self.verbose),
-                MinimaxAIPlayer(self.problem, 2, 6, heuristic, verbose=self.verbose)
+                MinimaxAIPlayer(self.problem, 1, 2, heuristic, verbose=self.verbose),
+                MinimaxAIPlayer(self.problem, 2, 4, heuristic, verbose=self.verbose)
             ]
         else:
             player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
@@ -92,13 +94,8 @@ class GameController:
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
 
         # Print the game duration and the performance metrics of the players
-        print(f'Game elapsed time: {game_duration:0.8f} | Turns = {turn}')
-        for i, player in enumerate(self.players):
-            print('-----')
-            print(f'Player {i + 1} average time: {player.average_time_spent_on_actions:0.8f}')
-            print(f'Player {i + 1} move count: {player.moves_count:0.8f}')
-            if hasattr(player, 'evaluated_states_count'):
-                print(f'Player {i + 1} expanded states: {player.evaluated_states_count}')
+        self.analytics.add_game_data(game_duration, turn, self.players)
+        self.analytics.print_game_data()
 
         # Wait until quit is pressed
         if self.gui:
