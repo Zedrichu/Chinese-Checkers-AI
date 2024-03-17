@@ -111,9 +111,9 @@ class AverageManhattanToCornerHeuristic(Heuristic):
 class SumOfPegsInCornerHeuristic(Heuristic):
     def eval(self, state: State, player: int) -> float:
         """
-        Consider the sum of pegs of the player - normalize the sum by the peg count for each player - scaled by weight
+        Consider the sum of pegs of the player - normalize the sum by the peg count for each player
         """
-        peg_count = (state.board.triangle_size - 1) * state.board.triangle_size / 2
+        peg_count = (state.board.triangle_size + 1) * state.board.triangle_size / 2
         return sum_player_pegs(state.board, player) / peg_count
 
 
