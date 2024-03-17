@@ -24,12 +24,13 @@ class MinimaxAIPlayer(Player):
             max_depth: int,
             heuristic: Heuristic,
             history_size: int = 10,
-            verbose=True
+            verbose=True,
+            title: str = None
     ):
         # Sets up multiprocessing
         super().__init__()
         mp.freeze_support()
-        self._player_type = 'minimax'
+        self._player_type = 'minimax' + f' {title}' if title is not None else ''
         self.prob = problem
         self.verbose = verbose
         self.MAX_PLAYER = max_player
