@@ -105,6 +105,9 @@ class EnsuredNormalizedHeuristic(Heuristic):
 class WeightedHeuristic(Heuristic):
     def __init__(self, weighted_heuristics: List[Tuple[Heuristic, float]]):
         self.weighted_heuristics = weighted_heuristics
+        total_weights = sum(weight for _, weight in weighted_heuristics)
+        if total_weights != 1:
+            raise ValueError(f'Total weights must be 1')
 
     def eval(self, state: State, player: int) -> float:
         total = 0
