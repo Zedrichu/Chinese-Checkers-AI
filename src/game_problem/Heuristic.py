@@ -83,7 +83,9 @@ class Heuristic(ABC):
 
 
 class NoneHeuristic(Heuristic):
-
+    """
+    A heuristic that always returns 0
+    """
     def eval(self, state: State, player: int) -> float:
         return 0
 
@@ -103,6 +105,9 @@ class EnsuredNormalizedHeuristic(Heuristic):
 
 
 class WeightedHeuristic(Heuristic):
+    """
+    Utility to combine multiple heuristics with different weights.
+    """
     def __init__(self, weighted_heuristics: List[Tuple[Heuristic, float]]):
         self.weighted_heuristics = weighted_heuristics
         total_weights = sum(weight for _, weight in weighted_heuristics)
@@ -110,6 +115,12 @@ class WeightedHeuristic(Heuristic):
             raise ValueError(f'Total weights must be 1')
 
     def eval(self, state: State, player: int) -> float:
+        """
+        Combine the weighted heuristics
+        :param state: the current state of the game
+        :param player: the player for which the heuristic is evaluated
+        :return: value of the combined heuristic
+        """
         total = 0
         for heuristic, weight in self.weighted_heuristics:
             total += heuristic.eval(state, player) * weight
@@ -146,5 +157,9 @@ class AverageEuclideanToCornerHeuristic(Heuristic):
 
 
 class MaxManhattanToCornerHeuristic(Heuristic):
+    """
+    Consider the maximal Manhattan distance towards the goal corner of each player - normalize the distance by 2
+    board size - helps to avoid the player from leaving pegs behind and carry them together towards the goal
+    """
     def eval(self, state: State, player: int) -> float:
         return 1 - max_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)

@@ -52,7 +52,9 @@ def find_button(mouse):
 
 
 class Graphics:
-
+    """
+    Class that represents the graphics of the game
+    """
     def __init__(self):
         self.pg = pg
         pg.init()

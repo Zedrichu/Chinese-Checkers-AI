@@ -37,6 +37,9 @@ def bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
 
 
 class Board:
+    """
+    Class that represents the board of the game
+    """
     def __init__(self, triangle_size: int, initialised=True, matrix: np.ndarray = None):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
@@ -117,6 +120,11 @@ class Board:
                 not self.is_cornered_with('bottom', 1))
 
     def move(self, initial_pos: Tuple[int, int], path: Tuple[int, int]):
+        """
+        Moves a peg from the initial position to the destination position.
+        :param initial_pos: the initial position of the peg
+        :param path: the destination position of the peg
+        """
         current_x, current_y = initial_pos
         x, y = path
 
@@ -136,6 +144,11 @@ class Board:
         return 0 <= coords[0] < self.board_size and 0 <= coords[1] < self.board_size
 
     def place_pegs(self, player_id: int, destinations: Iterable[Tuple[int, int]]):
+        """
+        Places pegs on the board for a specific player.
+        :param player_id: player index
+        :param destinations: iterable of destination coordinate pairs
+        """
         for dest in destinations:
             self.matrix[dest] = player_id
 
