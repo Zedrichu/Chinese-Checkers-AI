@@ -4,9 +4,12 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, eq=True, order=True)
 class Action:
-    src: Tuple[int, int]
-    dest: Tuple[int, int]
-    step_type: int
+    """
+    Class that represents actions in the game
+    """
+    src: Tuple[int, int]  # source peg coordinate tuple
+    dest: Tuple[int, int]  # destination peg coordinate tuple
+    step_type: int  # the type of step (CRAWL, JUMP, END)
 
     def __str__(self):
         return f"src: {self.src} dest: {self.dest} step_type: {self.step_type}"

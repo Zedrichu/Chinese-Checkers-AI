@@ -28,7 +28,7 @@ class GameController:
         #                 MinimaxAIPlayer(self.problem, 2, 6, heuristic1, verbose=verbose)]
         self.players = [
             MinimaxAIPlayer(self.problem, 1, 4, heuristic1, verbose=verbose),
-            MinimaxAIPlayer(self.problem, 2, 7, heuristic1, verbose=verbose)
+            MinimaxAIPlayer(self.problem, 2, 5, heuristic1, verbose=verbose)
         ]
 
     def game_loop(self):
