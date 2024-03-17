@@ -1,9 +1,9 @@
 import sys
 import pygame as pg
+from typing import List, Optional
 
 from game.Action import Action
 from game.Step import Step
-from typing import List, Optional
 from game.Board import Board
 from game.State import State
 

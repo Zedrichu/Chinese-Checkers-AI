@@ -1,5 +1,6 @@
 import time
 
+from players.NonRepeatRandomPlayer import NonRepeatingRandomPlayer
 from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
     AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic
 from players.GraphicsHumanPlayer import GraphicsHumanPlayer
@@ -9,27 +10,50 @@ from game_problem.ChineseCheckers import ChineseCheckers
 from game.Graphics import Graphics
 
 
+def create_player(player_type, depth=6, gui=None, problem=None, max_player=None, heuristic=None):
+    if player_type == 'human':
+        return GraphicsHumanPlayer(gui)
+    elif player_type == 'random':
+        return RandomPlayer()
+    elif player_type == 'nonrepeatrandom':
+        return NonRepeatingRandomPlayer()
+    elif player_type == 'minimax':
+        return MinimaxAIPlayer(problem, max_player, max_depth=depth, heuristic=heuristic, verbose=True)
+    else:
+        raise ValueError("Unsupported player type")
+
+
 class GameController:
     def __init__(self, verbose=True, use_graphics=True):
         self.verbose = verbose  # Flag to print the state and action applied
         self.use_graphics = use_graphics  # Flag to use the GUI
-
         self.problem = ChineseCheckers(triangle_size=3)  # Initialize the game problem
         self.gui = Graphics() if use_graphics else None  # Initialize the GUI if the flag is set
-        # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
+        self.players = []
+        self.handle_game_setup(args)
 
-        heuristic1 = WeightedHeuristic([
+    def handle_game_setup(self, args):
+        heuristic = WeightedHeuristic([
             (EnsuredNormalizedHeuristic(SumOfPegsInCornerHeuristic()), 0.1),
             (EnsuredNormalizedHeuristic(AverageManhattanToCornerHeuristic()), 0.3),
             (EnsuredNormalizedHeuristic(AverageEuclideanToCornerHeuristic()), 0.4),
             (EnsuredNormalizedHeuristic(MaxManhattanToCornerHeuristic()), 0.2),
         ])
-        # self.players = [GraphicsHumanPlayer(self.gui),
-        #                 MinimaxAIPlayer(self.problem, 2, 6, heuristic1, verbose=verbose)]
-        self.players = [
-            MinimaxAIPlayer(self.problem, 1, 4, heuristic1, verbose=verbose),
-            MinimaxAIPlayer(self.problem, 2, 5, heuristic1, verbose=verbose)
-        ]
+      
+      if args.first_player or args.second_player is None:
+          self.players = [
+              MinimaxAIPlayer(self.problem, 1, 6, heuristic, verbose=self.verbose),
+              MinimaxAIPlayer(self.problem, 2, 6, heuristic, verbose=self.verbose)
+          ]
+      else:
+          player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
+          player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
+          player1 = create_player(args.first_player, depth=player1_depth, gui=self.gui,
+                                  problem=self.problem, max_player=1, heuristic=heuristic)
+          player2 = create_player(args.second_player, depth=player2_depth, gui=self.gui,
+                                  problem=self.problem, max_player=2, heuristic=heuristic)
+          self.players.append(player1)
+          self.players.append(player2)
 
     def game_loop(self):
         """
