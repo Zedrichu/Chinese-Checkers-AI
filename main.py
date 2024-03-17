@@ -17,4 +17,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     controller = GameController(verbose=False, use_graphics=True, args=args)
+
     controller.game_loop()

@@ -52,7 +52,9 @@ def find_button(mouse):
 
 
 class Graphics:
-
+    """
+    Class that represents the graphics of the game
+    """
     def __init__(self):
         self.pg = pg
         pg.init()
@@ -70,6 +72,7 @@ class Graphics:
         self.draw_diamond_board(state.board)
         self.draw_current_player_turn(state.player)
         self.draw_end_turn_button()
+        self.pg.display.update()
 
     def start_listening_to_actions(self, actions: List[Action]):
         self.target_tile = None

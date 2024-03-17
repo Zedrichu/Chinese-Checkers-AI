@@ -5,6 +5,9 @@ from game.Action import Action
 
 
 class Player(ABC):
+    """
+    Interface class for a player in a game
+    """
 
     def __init__(self):
         self._total_time_spent_on_taking_actions = 0.0

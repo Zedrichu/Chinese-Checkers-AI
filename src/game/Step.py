@@ -3,6 +3,9 @@ from typing import Tuple, Optional
 
 
 class Step:
+    """
+    Class that represents steps in the game and validation logic for the steps
+    """
     CRAWL = 1
     JUMP = 2
     END = 3
@@ -19,9 +22,15 @@ class Step:
             return True
         return False
 
-    # Validate a crawl type of movement from src coordinates to dest coordinates
     @staticmethod
     def _validate_crawl(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
+        """
+        Validate if the src and dest coordinates are adjacent for a CRAWL type of movement
+        :param board: board object
+        :param src: source peg coordinate tuple
+        :param dest: destination peg coordinate tuple
+        :return: flag indicating if the movement is valid
+        """
         x1, y1 = src
         x2, y2 = dest
         delta_x12 = abs(x1 - x2)
@@ -35,6 +44,13 @@ class Step:
 
     @staticmethod
     def _validate_jump(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> bool:
+        """
+        Validate if the src and dest coordinates are valid for a JUMP type of movement - 6 permitted directions
+        :param board: board object
+        :param src: source peg coordinate tuple
+        :param dest: destination peg coordinate tuple
+        :return: flag indicating if the movement is valid
+        """
         x1, y1 = src
         x2, y2 = dest
         delta_x12 = abs(x1 - x2)
@@ -49,6 +65,13 @@ class Step:
 
     @staticmethod
     def validate_head(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> Optional[int]:
+        """
+        Validate the movement after a change turn - CRAWL or JUMP - for the head of the move
+        :param board: board object
+        :param src: source peg coordinate tuple
+        :param dest: destination peg coordinate tuple
+        :return: flag indicating the type of movement allowed
+        """
         if (abs(src[0] - dest[0]) <= 1 and abs(src[1] - dest[1]) <= 1
                 and Step._validate_crawl(board, src, dest)):
             return Step.CRAWL
@@ -59,6 +82,13 @@ class Step:
 
     @staticmethod
     def validate_tail(board: Board, src: Tuple[int, int], dest: Tuple[int, int]) -> Optional[int]:
+        """
+        Validate the movement after a JUMP - JUMP or END - for the tail of the move
+        :param board: board object
+        :param src: source peg coordinate tuple
+        :param dest: destination peg coordinate tuple
+        :return: flag indicating the type of movement allowed
+        """
         if Step._validate_end(src, dest):
             return Step.END
         elif Step._validate_jump(board, src, dest):
