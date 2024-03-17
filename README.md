@@ -7,10 +7,10 @@ This project implements a Chinese Checkers game that can be played in various mo
 Before running the game, ensure you have Python installed on your system. This game has been tested with Python 3.12+.
 
 Clone the repository to your local machine:
-
+```bash
 git clone https://github.com/Zedrichu/Chinese-Checkers-AI.git
-
 cd chinese-checkers
+```
 
 ## Usage
 
