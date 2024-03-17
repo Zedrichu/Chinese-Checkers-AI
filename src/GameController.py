@@ -8,6 +8,19 @@ from game_problem.ChineseCheckers import ChineseCheckers
 from game.Graphics import Graphics
 
 
+def create_player(player_type, depth=6, gui=None, problem=None, max_player=None):
+    if player_type == 'human':
+        return GraphicsHumanPlayer(gui)
+    elif player_type == 'random':
+        return RandomPlayer()
+    elif player_type == 'nonrepeatrandom':
+        return NonRepeatingRandomPlayer()
+    elif player_type == 'minimax':
+        return MinimaxAIPlayer(problem, max_player, max_depth=depth, verbose=True)
+    else:
+        raise ValueError("Unsupported player type")
+
+
 class GameController:
     def __init__(self, verbose=True, use_graphics=True, args=None):
         self.verbose = verbose
@@ -24,17 +37,14 @@ class GameController:
                 MinimaxAIPlayer(self.problem, 2, 6, verbose=self.verbose)
             ]
         else:
-            if args.first_human:
-                self.players.append(GraphicsHumanPlayer(self.gui))
-            elif args.first_minmax is not None:
-                self.players.append(MinimaxAIPlayer(self.problem, 1, args.first_minmax, verbose=self.verbose))
-
-            if args.second_rand:
-                self.players.append(RandomPlayer())
-            elif args.second_noreprand:
-                self.players.append(NonRepeatingRandomPlayer())
-            elif args.second_minmax is not None:
-                self.players.append(MinimaxAIPlayer(self.problem, 2, args.second_minmax, verbose=self.verbose))
+            player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
+            player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
+            player1 = create_player(args.first_player, depth=player1_depth, gui=self.gui,
+                                    problem=self.problem, max_player=1)
+            player2 = create_player(args.second_player, depth=player2_depth, gui=self.gui,
+                                    problem=self.problem, max_player=2)
+            self.players.append(player1)
+            self.players.append(player2)
 
     def game_loop(self):
         state = self.problem.initial_state()
