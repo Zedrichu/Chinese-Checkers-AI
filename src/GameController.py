@@ -31,7 +31,7 @@ class GameController:
         self.handle_game_setup(args)
 
     def handle_game_setup(self, args):
-        if args is None:
+        if args.first_player or args.second_player is None:
             self.players = [
                 MinimaxAIPlayer(self.problem, 1, 6, verbose=self.verbose),
                 MinimaxAIPlayer(self.problem, 2, 6, verbose=self.verbose)
