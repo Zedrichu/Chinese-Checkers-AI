@@ -53,3 +53,8 @@ class GameController:
             print(f'Player {i + 1} move count: {player.moves_count:0.8f}')
             if hasattr(player, 'evaluated_states_count'):
                 print(f'Player {i + 1} expanded states: {player.evaluated_states_count}')
+
+        # Wait until quit is pressed
+        if self.gui:
+            while True:
+                self.gui.handle_quit()
