@@ -8,7 +8,7 @@ Before running the game, ensure you have Python installed on your system. This g
 
 Clone the repository to your local machine:
 
-git clone https://yourrepositorylink.git
+git clone https://github.com/Zedrichu/Chinese-Checkers-AI.git
 
 cd chinese-checkers
 
