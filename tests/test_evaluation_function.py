@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 from parameterized import parameterized
 
@@ -6,7 +7,7 @@ from game.Board import Board
 from game.State import State
 from game_problem.ChineseCheckers import ChineseCheckers
 from game_problem.Heuristic import average_manhattan_to_corner, AverageManhattanToCornerHeuristic, Heuristic, \
-    SumOfPegsInCornerHeuristic, AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, NoneHeuristic
+    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, NoneHeuristic, SumOfPegsInCornerHeuristic
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 
 
@@ -116,3 +117,19 @@ class TestEvaluationFunction(unittest.TestCase):
         avg_manhattan1 = average_manhattan_to_corner(state1.board, 2)
         avg_manhattan2 = average_manhattan_to_corner(state2.board, 2)
         self.assertTrue(avg_manhattan1 < avg_manhattan2)
+
+    def test_sum_of_pegs_in_corner_heuristic(self):
+        sut = SumOfPegsInCornerHeuristic()
+        state = State(Board(2, matrix=np.array([
+            [0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 1],
+            [0, 0, 0, 1, 0],
+            [2, 0, 0, 0, 0],
+            [2, 2, 0, 0, 0],
+        ])))
+
+        result_player_1 = sut.eval(state, player=1)
+        result_player_2 = sut.eval(state, player=2)
+
+        self.assertEqual(2 / 3, result_player_1)
+        self.assertEqual(3 / 3, result_player_2)

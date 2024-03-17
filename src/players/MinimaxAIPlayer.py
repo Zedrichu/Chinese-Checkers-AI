@@ -151,6 +151,9 @@ class MinimaxAIPlayer(Player):
         # state_value = state
         state_value = hash(state)
 
+        if state_value in self._state_history_set:
+            return
+
         self._state_history_set.add(state_value)
         self._state_history_queue.append(state_value)
         if len(self._state_history_set) > self.history_size:

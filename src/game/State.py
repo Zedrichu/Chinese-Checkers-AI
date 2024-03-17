@@ -22,4 +22,4 @@ class State:
                 and self.peg == other.peg and np.array_equal(self.board.matrix, other.board.matrix))
 
     def __hash__(self):
-        return hash((str(self.board.matrix), self.player, self.mode, self.peg))
+        return hash((bytes(self.board.matrix), self.player, self.mode, self.peg))

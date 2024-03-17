@@ -88,9 +88,26 @@ class NoneHeuristic(Heuristic):
         return 0
 
 
+class EnsuredNormalizedHeuristic(Heuristic):
+    """
+    Utility to verify that the inner heuristic is normalized.
+    Usage: EnsuredNormalizedHeuristic(SomeOtherHeuristic()).eval(state, player)
+    """
+    def __init__(self, inner_heuristic: Heuristic):
+        self.inner_heuristic = inner_heuristic
+
+    def eval(self, state: State, player: int) -> float:
+        value = self.inner_heuristic.eval(state, player)
+        assert -0.001 <= value <= 1, f'{type(self.inner_heuristic).__name__}: Assertion -0.001 <= {value} <= 1 Failed'
+        return value
+
+
 class WeightedHeuristic(Heuristic):
     def __init__(self, weighted_heuristics: List[Tuple[Heuristic, float]]):
         self.weighted_heuristics = weighted_heuristics
+        total_weights = sum(weight for _, weight in weighted_heuristics)
+        if total_weights != 1:
+            raise ValueError(f'Total weights must be 1')
 
     def eval(self, state: State, player: int) -> float:
         total = 0
@@ -111,9 +128,9 @@ class AverageManhattanToCornerHeuristic(Heuristic):
 class SumOfPegsInCornerHeuristic(Heuristic):
     def eval(self, state: State, player: int) -> float:
         """
-        Consider the sum of pegs of the player - normalize the sum by the peg count for each player - scaled by weight
+        Consider the sum of pegs of the player - normalize the sum by the peg count for each player
         """
-        peg_count = (state.board.triangle_size - 1) * state.board.triangle_size / 2
+        peg_count = (state.board.triangle_size + 1) * state.board.triangle_size / 2
         return sum_player_pegs(state.board, player) / peg_count
 
 
