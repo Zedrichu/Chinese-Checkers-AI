@@ -24,7 +24,7 @@ def create_player(player_type, depth=6, gui=None, problem=None, max_player=None,
 
 
 class GameController:
-    def __init__(self, verbose=True, use_graphics=True):
+    def __init__(self, verbose=True, use_graphics=True, args=None):
         self.verbose = verbose  # Flag to print the state and action applied
         self.use_graphics = use_graphics  # Flag to use the GUI
         self.problem = ChineseCheckers(triangle_size=3)  # Initialize the game problem
@@ -39,21 +39,21 @@ class GameController:
             (EnsuredNormalizedHeuristic(AverageEuclideanToCornerHeuristic()), 0.4),
             (EnsuredNormalizedHeuristic(MaxManhattanToCornerHeuristic()), 0.2),
         ])
-      
-      if args.first_player or args.second_player is None:
-          self.players = [
-              MinimaxAIPlayer(self.problem, 1, 6, heuristic, verbose=self.verbose),
-              MinimaxAIPlayer(self.problem, 2, 6, heuristic, verbose=self.verbose)
-          ]
-      else:
-          player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
-          player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
-          player1 = create_player(args.first_player, depth=player1_depth, gui=self.gui,
-                                  problem=self.problem, max_player=1, heuristic=heuristic)
-          player2 = create_player(args.second_player, depth=player2_depth, gui=self.gui,
-                                  problem=self.problem, max_player=2, heuristic=heuristic)
-          self.players.append(player1)
-          self.players.append(player2)
+
+        if args.first_player is None or args.second_player is None:
+            self.players = [
+                MinimaxAIPlayer(self.problem, 1, 6, heuristic, verbose=self.verbose),
+                MinimaxAIPlayer(self.problem, 2, 6, heuristic, verbose=self.verbose)
+            ]
+        else:
+            player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
+            player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
+            player1 = create_player(args.first_player, depth=player1_depth, gui=self.gui,
+                                    problem=self.problem, max_player=1, heuristic=heuristic)
+            player2 = create_player(args.second_player, depth=player2_depth, gui=self.gui,
+                                    problem=self.problem, max_player=2, heuristic=heuristic)
+            self.players.append(player1)
+            self.players.append(player2)
 
     def game_loop(self):
         """
