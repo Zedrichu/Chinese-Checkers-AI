@@ -156,6 +156,27 @@ class AverageEuclideanToCornerHeuristic(Heuristic):
         return 1 - average_euclidean_to_corner(state.board, player) / initial_euclidean
 
 
+class AverageEuclideanToEachCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        """
+        AverageEuclideanToCornerHeuristic but does a mean of the distance to each corner.
+        """
+        initial_euclidean = initial_avg_euclidean(state.board)
+
+        if player == 1:
+            corners = top_right_corner_coords(state.board.triangle_size, state.board.board_size)
+        else:
+            corners = bot_left_corner_coords(state.board.triangle_size, state.board.board_size)
+        indices = np.argwhere(state.board.matrix == player)
+
+        means = 0
+        for corner in corners:
+            distances = np.linalg.norm(indices - corner, axis=1)
+            means += np.mean(distances)
+        final_mean = means / len(corners)
+        return 1 - final_mean / initial_euclidean
+
+
 class MaxManhattanToCornerHeuristic(Heuristic):
     """
     Consider the maximal Manhattan distance towards the goal corner of each player - normalize the distance by 2
