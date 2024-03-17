@@ -1,5 +1,7 @@
 import time
 
+from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
+    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic
 from players.GraphicsHumanPlayer import GraphicsHumanPlayer
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 from players.RandomPlayer import RandomPlayer
@@ -15,11 +17,18 @@ class GameController:
         self.problem = ChineseCheckers(triangle_size=3)
         self.gui = Graphics() if use_graphics else None
         # self.players = [GraphicsHumanPlayer(self.gui), RandomPlayer()]
-        self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
-        # self.players = [
-        #     MinimaxAIPlayer(self.problem, 1, 6, verbose=verbose),
-        #     MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)
-        # ]
+        # self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
+
+        heuristic1 = WeightedHeuristic([
+            (SumOfPegsInCornerHeuristic(), 0.1),
+            (AverageManhattanToCornerHeuristic(), 0.3),
+            (AverageEuclideanToCornerHeuristic(), 0.4),
+            (MaxManhattanToCornerHeuristic(), 0.2),
+        ])
+        self.players = [
+            MinimaxAIPlayer(self.problem, 1, 4, heuristic1, verbose=verbose),
+            MinimaxAIPlayer(self.problem, 2, 4, heuristic1, verbose=verbose)
+        ]
 
     def game_loop(self):
         state = self.problem.initial_state()

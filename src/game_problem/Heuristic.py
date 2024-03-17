@@ -1,7 +1,11 @@
+from abc import ABC, abstractmethod
+from typing import List, Tuple
+
 import numpy as np
 
 from game import Board
 from game.Board import bot_left_corner_coords, top_right_corner_coords
+from game.State import State
 
 """
 Utility functions for evaluation of board states.
@@ -70,3 +74,60 @@ def sum_player_pegs(board: Board, player: int) -> float:
     else:
         corner = bot_left_corner_coords(board.triangle_size, board.board_size)
     return np.sum(board.matrix[corner[:, 0], corner[:, 1]] == player)
+
+
+class Heuristic(ABC):
+    @abstractmethod
+    def eval(self, state: State, player: int) -> float:
+        raise NotImplemented
+
+
+class NoneHeuristic(Heuristic):
+
+    def eval(self, state: State, player: int) -> float:
+        return 0
+
+
+class WeightedHeuristic(Heuristic):
+    def __init__(self, weighted_heuristics: List[Tuple[Heuristic, float]]):
+        self.weighted_heuristics = weighted_heuristics
+
+    def eval(self, state: State, player: int) -> float:
+        total = 0
+        for heuristic, weight in self.weighted_heuristics:
+            total += heuristic.eval(state, player) * weight
+        return total
+
+
+class AverageManhattanToCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        """
+        Consider Manhattan distance towards the goal corner of each player - normalize the distance by 2 board size
+        Subtract the normalized distance from 1 to get a heuristic that is higher when closer to the goal
+        """
+        return 1 - average_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)
+
+
+class SumOfPegsInCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        """
+        Consider the sum of pegs of the player - normalize the sum by the peg count for each player - scaled by weight
+        """
+        peg_count = (state.board.triangle_size - 1) * state.board.triangle_size / 2
+        return sum_player_pegs(state.board, player) / peg_count
+
+
+class AverageEuclideanToCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        """
+        Consider the Euclidean distance towards the goal corner of each player - normalize the distance by the initial
+        average distance to the corner - subtract the normalized distance from 1 to get a heuristic that is higher
+        when closer to the goal
+        """
+        initial_euclidean = initial_avg_euclidean(state.board)
+        return 1 - average_euclidean_to_corner(state.board, player) / initial_euclidean
+
+
+class MaxManhattanToCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        return 1 - max_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)

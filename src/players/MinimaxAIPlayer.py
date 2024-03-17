@@ -14,13 +14,22 @@ sys.setrecursionlimit(2000)
 
 
 class MinimaxAIPlayer(Player):
-    def __init__(self, problem: GameProblem, max_player: int, max_depth: int = 8, history_size: int = 10, verbose=True):
+    def __init__(
+            self,
+            problem: GameProblem,
+            max_player: int,
+            max_depth: int,
+            heuristic: Heuristic,
+            history_size: int = 10,
+            verbose=True
+    ):
         # Sets up multiprocessing
         super().__init__()
         mp.freeze_support()
         self.verbose = verbose
         self.prob = problem
         self.MAX_PLAYER = max_player
+        self.heuristic = heuristic
         self.max_depth = max_depth
 
         # Counter for the evaluated states
@@ -131,32 +140,9 @@ class MinimaxAIPlayer(Player):
 
     def eval_state(self, state: State, player: int) -> float:
         self.evaluated_states_count += 1
-
         if self.prob.terminal_test(state):
             return self.prob.utility(state, player)
-
-        weights = [0.1, 0.3, 0.4, 0.2]  # Sum must be always equal ~ 1
-
-        peg_count = (state.board.triangle_size - 1) * state.board.triangle_size / 2
-        initial_euclidean = initial_avg_euclidean(state.board)
-
-        # Consider Manhattan distance towards the goal corner of each player - normalize the distance by 2 board size
-        # Subtract the normalized distance from 1 to get a heuristic that is higher when closer to the goal
-        heuristic1 = (1 - average_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)) * weights[1]
-
-        # Consider the sum of pegs of the player - normalize the sum by the peg count for each player - scaled by weight
-        heuristic2 = (sum_player_pegs(state.board, player) / peg_count) * weights[0]  # / peg_count
-
-        # Consider the Euclidean distance towards the goal corner of each player - normalize the distance by the initial
-        # average distance to the corner - subtract the normalized distance from 1 to get a heuristic that is higher
-        # when closer to the goal
-        heuristic3 = (1 - average_euclidean_to_corner(state.board, player) / initial_euclidean) * weights[2]
-
-        heuristic4 = (1 - max_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)) * weights[3]
-
-        # print(f'Heuristic 1: {heuristic1} | Heuristic 2: {heuristic2} | Heuristic 3: {heuristic3}')
-        # Compute the combined heuristic function and flip the value if the player is
-        return heuristic1 + heuristic2 + heuristic3 + heuristic4
+        return self.heuristic.eval(state, player)
 
     def cutoff_test(self, state: State, depth: int) -> bool:
         return self.prob.terminal_test(state) or depth == self.max_depth
