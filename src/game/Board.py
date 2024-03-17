@@ -37,11 +37,17 @@ def bot_left_corner_coords(triangle_size: int, board_size: int) -> np.ndarray:
 
 
 class Board:
-    def __init__(self, triangle_size: int, initialised=True):
+    def __init__(self, triangle_size: int, initialised=True, matrix: np.ndarray = None):
         self.triangle_size = triangle_size
         self.board_size = triangle_size * 2 + 1
-        self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
-        if initialised:
+
+        if matrix is None:
+            self.matrix = np.zeros((self.board_size, self.board_size), dtype=int)
+        else:
+            self.matrix = matrix
+            assert matrix.shape == (self.board_size, self.board_size)
+
+        if initialised and matrix is None:
             self.init_board()
 
     def init_board(self):
