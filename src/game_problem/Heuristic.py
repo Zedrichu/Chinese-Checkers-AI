@@ -88,6 +88,20 @@ class NoneHeuristic(Heuristic):
         return 0
 
 
+class EnsuredNormalizedHeuristic(Heuristic):
+    """
+    Utility to verify that the inner heuristic is normalized.
+    Usage: EnsuredNormalizedHeuristic(SomeOtherHeuristic()).eval(state, player)
+    """
+    def __init__(self, inner_heuristic: Heuristic):
+        self.inner_heuristic = inner_heuristic
+
+    def eval(self, state: State, player: int) -> float:
+        value = self.inner_heuristic.eval(state, player)
+        assert -0.001 <= value <= 1, f'{type(self.inner_heuristic).__name__}: Assertion -0.001 <= {value} <= 1 Failed'
+        return value
+
+
 class WeightedHeuristic(Heuristic):
     def __init__(self, weighted_heuristics: List[Tuple[Heuristic, float]]):
         self.weighted_heuristics = weighted_heuristics

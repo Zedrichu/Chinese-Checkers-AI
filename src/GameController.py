@@ -1,7 +1,7 @@
 import time
 
 from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
-    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic
+    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic
 from players.GraphicsHumanPlayer import GraphicsHumanPlayer
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 from players.RandomPlayer import RandomPlayer
@@ -20,10 +20,10 @@ class GameController:
         # self.players = [GraphicsHumanPlayer(self.gui), MinimaxAIPlayer(self.problem, 2, 6, verbose=verbose)]
 
         heuristic1 = WeightedHeuristic([
-            (SumOfPegsInCornerHeuristic(), 0.1),
-            (AverageManhattanToCornerHeuristic(), 0.3),
-            (AverageEuclideanToCornerHeuristic(), 0.4),
-            (MaxManhattanToCornerHeuristic(), 0.2),
+            (EnsuredNormalizedHeuristic(SumOfPegsInCornerHeuristic()), 0.1),
+            (EnsuredNormalizedHeuristic(AverageManhattanToCornerHeuristic()), 0.3),
+            (EnsuredNormalizedHeuristic(AverageEuclideanToCornerHeuristic()), 0.4),
+            (EnsuredNormalizedHeuristic(MaxManhattanToCornerHeuristic()), 0.2),
         ])
         self.players = [
             MinimaxAIPlayer(self.problem, 1, 4, heuristic1, verbose=verbose),
