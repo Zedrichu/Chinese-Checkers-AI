@@ -99,6 +99,9 @@ class GameController:
         self.analytics.add_game_data(game_duration, turn, self.players, winner)
         self.analytics.print_game_data()
 
+        self.analytics.load_from_file('game_data.json')
+        self.analytics.plot()
+
         # Wait until quit is pressed
         if self.gui:
             while True:

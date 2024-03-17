@@ -208,27 +208,27 @@
             "winner": 1
         },
         {
-            "game_duration": 2.0372937091160566,
-            "total_turns": 129,
+            "game_duration": 1329.2665478750132,
+            "total_turns": 131,
             "players": [
                 {
                     "player_type": "minimax",
-                    "average_time_per_action": 0.002859961134610606,
-                    "move_count": 61,
-                    "expanded_states": 2408,
-                    "max_depth": 2,
+                    "average_time_per_action": 0.23267057559590926,
+                    "move_count": 54,
+                    "expanded_states": 154477,
+                    "max_depth": 6,
                     "player_id": 1
                 },
                 {
                     "player_type": "minimax",
-                    "average_time_per_action": 0.027369096816983074,
-                    "move_count": 68,
-                    "expanded_states": 28215,
-                    "max_depth": 4,
+                    "average_time_per_action": 17.09996407194813,
+                    "move_count": 77,
+                    "expanded_states": 17763636,
+                    "max_depth": 10,
                     "player_id": 2
                 }
             ],
-            "winner": 2
+            "winner": 1
         }
     ]
 }
