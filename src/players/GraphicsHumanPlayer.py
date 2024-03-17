@@ -12,6 +12,7 @@ class GraphicsHumanPlayer(Player):
 
     def __init__(self, gui: Graphics):
         super().__init__()
+        self._player_type = 'human'
         self.gui = gui
 
     def get_action(self, problem: GameProblem, state: State) -> Action:

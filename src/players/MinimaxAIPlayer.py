@@ -29,6 +29,7 @@ class MinimaxAIPlayer(Player):
         # Sets up multiprocessing
         super().__init__()
         mp.freeze_support()
+        self._player_type = 'minimax'
         self.prob = problem
         self.verbose = verbose
         self.MAX_PLAYER = max_player

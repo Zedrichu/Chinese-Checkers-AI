@@ -16,6 +16,7 @@ class NonRepeatingRandomPlayer(Player):
 
     def __init__(self):
         super().__init__()
+        self._player_type = 'nonrepeatrandom'
         self.previous_actions_and_states = []
 
     def get_action(self, problem: GameProblem, state: State) -> Optional[Action]:
