@@ -47,6 +47,7 @@ class GameAnalytics:
         game = self.data['games'][-1]
 
         print('Most Recent Game:')
+        print(f'Winner: Player {game["winner"]} ({game["players"][game["winner"] - 1]["player_type"]})')
         print(f"Game elapsed time: {game['game_duration']:0.8f} | Turns = {game['total_turns']}")
         for i, player_data in enumerate(game['players']):
             print('-----')

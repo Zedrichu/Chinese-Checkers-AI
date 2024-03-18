@@ -7,7 +7,8 @@ from game.Board import Board
 from game.State import State
 from game_problem.ChineseCheckers import ChineseCheckers
 from game_problem.Heuristic import average_manhattan_to_corner, AverageManhattanToCornerHeuristic, Heuristic, \
-    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, NoneHeuristic, SumOfPegsInCornerHeuristic
+    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, NoneHeuristic, SumOfPegsInCornerHeuristic, \
+    AverageEuclideanToEachCornerHeuristic, AverageManhattanToEachCornerHeuristic
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 
 
@@ -32,7 +33,9 @@ class TestEvaluationFunction(unittest.TestCase):
 
     @parameterized.expand([
         AverageManhattanToCornerHeuristic(),
+        AverageManhattanToEachCornerHeuristic(),
         AverageEuclideanToCornerHeuristic(),
+        AverageEuclideanToEachCornerHeuristic(),
         MaxManhattanToCornerHeuristic(),
     ])
     def test_payoff_on_random_states(self, heuristic: Heuristic):
@@ -58,31 +61,42 @@ class TestEvaluationFunction(unittest.TestCase):
 
     @parameterized.expand([
         AverageManhattanToCornerHeuristic(),
+        AverageManhattanToEachCornerHeuristic(),
         AverageEuclideanToCornerHeuristic(),
+        AverageEuclideanToEachCornerHeuristic(),
     ])
     def test_payoff_on_random_states2(self, heuristic: Heuristic):
         state1 = State(Board(3, matrix=np.array([
-            [0, 0, 0, 2, 2, 0, 2],
+            [0, 0, 0, 0, 2, 2, 2],
             [0, 0, 0, 0, 0, 2, 2],
-            [0, 0, 0, 0, 0, 0, 2],
+            [0, 0, 0, 1, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 2, 0, 0, 0],
             [1, 1, 0, 0, 0, 0, 0],
             [1, 1, 1, 0, 0, 0, 0],
         ])))
         state2 = State(Board(3, matrix=np.array([
             [0, 0, 0, 0, 2, 2, 2],
             [0, 0, 0, 0, 0, 2, 2],
-            [0, 0, 0, 0, 0, 0, 2],
+            [0, 0, 0, 0, 2, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0],
             [1, 1, 0, 0, 0, 0, 0],
             [1, 1, 1, 0, 0, 0, 0],
         ])))
 
-        eval1 = heuristic.eval(state1, player=2)
-        eval2 = heuristic.eval(state2, player=2)
-        self.assertGreater(eval1, eval2)
+        eval1_player1 = heuristic.eval(state1, player=1)
+        eval2_player1 = heuristic.eval(state2, player=1)
+
+        eval1_player2 = heuristic.eval(state1, player=2)
+        eval2_player2 = heuristic.eval(state2, player=2)
+
+        # Verify if the heuristic behaves symmetrically
+        self.assertGreater(eval1_player1, eval2_player1)
+        self.assertGreater(eval1_player2, eval2_player2)
+
+        self.assertAlmostEqual(eval1_player1, eval1_player2)
+        self.assertAlmostEqual(eval2_player1, eval2_player2)
 
     def test_avg_manhattan_on_state(self):
         state = State(Board(2, matrix=np.array([

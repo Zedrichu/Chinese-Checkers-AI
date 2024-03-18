@@ -4,6 +4,7 @@ import sys
 sys.path.append("src")
 from GameController import GameController
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Chinese Checkers game with AI and player options.')
 
