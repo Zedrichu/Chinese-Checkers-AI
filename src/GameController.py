@@ -93,14 +93,15 @@ class GameController:
         game_duration = time.perf_counter() - game_start_timer
         print(f'Player {state.player} has utility: {self.problem.utility(state, state.player)}')
 
-        winner = state.player if self.problem.utility(state, state.player) >= 0 else 3 - state.player
+        winner = state.player if self.problem.utility(state, state.player) >= 0 else len(self.players) + 1 - state.player
 
         # Print the game duration and the performance metrics of the players
         self.analytics.add_game_data(game_duration, turn, self.players, winner)
         self.analytics.print_game_data()
 
-        self.analytics.load_from_file('game_data.json')
-        self.analytics.plot()
+        # code used to plot the results
+        # self.analytics.load_from_file('game_data.json')
+        # self.analytics.plot()
 
         # Wait until quit is pressed
         if self.gui:
