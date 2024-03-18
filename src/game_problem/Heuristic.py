@@ -116,14 +116,15 @@ class WeightedHeuristic(Heuristic):
 
     def eval(self, state: State, player: int) -> float:
         """
-        Combine the weighted heuristics
+        Combine the weighted heuristics.
+        Round the values so that the AI doesn't differentiate between very small numbers.
         :param state: the current state of the game
         :param player: the player for which the heuristic is evaluated
         :return: value of the combined heuristic
         """
         total = 0
         for heuristic, weight in self.weighted_heuristics:
-            total += heuristic.eval(state, player) * weight
+            total += round(heuristic.eval(state, player), 4) * weight
         return total
 
 
@@ -137,6 +138,9 @@ class AverageManhattanToCornerHeuristic(Heuristic):
 
 
 class AverageManhattanToEachCornerHeuristic(Heuristic):
+    """
+    Computes the average Manhattan distance to the non-occupied corners.
+    """
     def eval(self, state: State, player: int) -> float:
         if player == 1:
             corners = top_right_corner_coords(state.board.triangle_size, state.board.board_size)
@@ -145,11 +149,17 @@ class AverageManhattanToEachCornerHeuristic(Heuristic):
 
         indices = np.argwhere(state.board.matrix == player)
         total = 0
+        considered_corners_count = 0
         for corner in corners:
-            distances = np.sum(np.abs(indices - corner), axis=1)
-            total += np.mean(distances)
+            if state.board.matrix[corner[0], corner[1]] == 0:
+                distances = np.sum(np.abs(indices - corner), axis=1)
+                total += np.mean(distances)
+                considered_corners_count += 1
 
-        total_mean = total / len(corners)
+        if considered_corners_count == 0:
+            total_mean = 0
+        else:
+            total_mean = total / considered_corners_count
         return 1 - total_mean / (2 * state.board.board_size)
 
 
@@ -177,6 +187,7 @@ class AverageEuclideanToEachCornerHeuristic(Heuristic):
     def eval(self, state: State, player: int) -> float:
         """
         AverageEuclideanToCornerHeuristic but does a mean of the distance to each corner.
+        Computes the average Euclidean distance to the non-occupied corners.
         """
         initial_euclidean = initial_avg_euclidean(state.board)
 
@@ -187,10 +198,17 @@ class AverageEuclideanToEachCornerHeuristic(Heuristic):
         indices = np.argwhere(state.board.matrix == player)
 
         means = 0
+        considered_corners_count = 0
         for corner in corners:
-            distances = np.linalg.norm(indices - corner, axis=1)
-            means += np.mean(distances)
-        final_mean = means / len(corners)
+            if state.board.matrix[corner[0], corner[1]] == 0:
+                distances = np.linalg.norm(indices - corner, axis=1)
+                means += np.mean(distances)
+                considered_corners_count += 1
+
+        if considered_corners_count == 0:
+            final_mean = 0
+        else:
+            final_mean = means / considered_corners_count
         return 1 - final_mean / initial_euclidean
 
 
