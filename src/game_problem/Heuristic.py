@@ -136,6 +136,23 @@ class AverageManhattanToCornerHeuristic(Heuristic):
         return 1 - average_manhattan_to_corner(state.board, player) / (2 * state.board.board_size)
 
 
+class AverageManhattanToEachCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        if player == 1:
+            corners = top_right_corner_coords(state.board.triangle_size, state.board.board_size)
+        else:
+            corners = bot_left_corner_coords(state.board.triangle_size, state.board.board_size)
+
+        indices = np.argwhere(state.board.matrix == player)
+        total = 0
+        for corner in corners:
+            distances = np.sum(np.abs(indices - corner), axis=1)
+            total += np.mean(distances)
+
+        total_mean = total / len(corners)
+        return 1 - total_mean / (2 * state.board.board_size)
+
+
 class SumOfPegsInCornerHeuristic(Heuristic):
     def eval(self, state: State, player: int) -> float:
         """
@@ -154,6 +171,27 @@ class AverageEuclideanToCornerHeuristic(Heuristic):
         """
         initial_euclidean = initial_avg_euclidean(state.board)
         return 1 - average_euclidean_to_corner(state.board, player) / initial_euclidean
+
+
+class AverageEuclideanToEachCornerHeuristic(Heuristic):
+    def eval(self, state: State, player: int) -> float:
+        """
+        AverageEuclideanToCornerHeuristic but does a mean of the distance to each corner.
+        """
+        initial_euclidean = initial_avg_euclidean(state.board)
+
+        if player == 1:
+            corners = top_right_corner_coords(state.board.triangle_size, state.board.board_size)
+        else:
+            corners = bot_left_corner_coords(state.board.triangle_size, state.board.board_size)
+        indices = np.argwhere(state.board.matrix == player)
+
+        means = 0
+        for corner in corners:
+            distances = np.linalg.norm(indices - corner, axis=1)
+            means += np.mean(distances)
+        final_mean = means / len(corners)
+        return 1 - final_mean / initial_euclidean
 
 
 class MaxManhattanToCornerHeuristic(Heuristic):

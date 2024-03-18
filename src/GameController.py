@@ -1,9 +1,11 @@
 import time
 
 from benchmarking.GameAnalytics import GameAnalytics
+from game_problem.GameProblem import GameProblem
 from players.NonRepeatRandomPlayer import NonRepeatingRandomPlayer
 from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
-    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic
+    AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic, \
+    AverageEuclideanToEachCornerHeuristic, AverageManhattanToEachCornerHeuristic
 from players.GraphicsHumanPlayer import GraphicsHumanPlayer
 from players.MinimaxAIPlayer import MinimaxAIPlayer
 from players.RandomPlayer import RandomPlayer
@@ -24,6 +26,100 @@ def create_player(player_type, depth=6, gui=None, problem=None, max_player=None,
         raise ValueError("Unsupported player type")
 
 
+def build_test_subject_with_default_weighted_heuristic(problem: GameProblem, depth: int, verbose=False):
+    heuristic1 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.1),
+        (AverageManhattanToCornerHeuristic(), 0.3),
+        (AverageEuclideanToCornerHeuristic(), 0.4),
+        (MaxManhattanToCornerHeuristic(), 0.2),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth, heuristic1, verbose=verbose),
+        MinimaxAIPlayer(problem, 2, depth, heuristic1, verbose=verbose)
+    ]
+
+
+def build_test_subject_manhattan_vs_euclidian(problem: GameProblem, depth1: int, depth2: int, verbose=False):
+    heuristic1 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageEuclideanToCornerHeuristic(), 0.8),
+    ])
+
+    heuristic2 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageManhattanToCornerHeuristic(), 0.8),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth1, heuristic1, verbose=verbose, title='AverageEuclidean'),
+        MinimaxAIPlayer(problem, 2, depth2, heuristic2, verbose=verbose, title='AverageManhattan')
+    ]
+
+
+def build_test_subject_euclidian_vs_euclidian_each_corner(problem: GameProblem, depth1: int, depth2: int, verbose=False):
+    heuristic1 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageEuclideanToCornerHeuristic(), 0.8),
+    ])
+
+    heuristic2 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageEuclideanToEachCornerHeuristic(), 0.8),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth1, heuristic1, verbose=verbose, title='AverageEuclidean'),
+        MinimaxAIPlayer(problem, 2, depth2, heuristic2, verbose=verbose, title='AverageEuclideanToEachCorner')
+    ]
+
+
+def build_test_subject_manhattan_vs_manhattan_each_corner(problem: GameProblem, depth1: int, depth2: int, verbose=False):
+    heuristic1 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageManhattanToCornerHeuristic(), 0.8),
+    ])
+
+    heuristic2 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.2),
+        (AverageManhattanToEachCornerHeuristic(), 0.8),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth1, heuristic1, verbose=verbose, title='AverageManhattan'),
+        MinimaxAIPlayer(problem, 2, depth2, heuristic2, verbose=verbose, title='AverageManhattanToEachCorner')
+    ]
+
+
+def build_test_subject_weighted_single_corner_vs_weighted_each_corners(problem: GameProblem, depth1: int, depth2: int, verbose=False):
+    heuristic1 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.1),
+        (AverageManhattanToCornerHeuristic(), 0.3),
+        (AverageEuclideanToCornerHeuristic(), 0.4),
+        (MaxManhattanToCornerHeuristic(), 0.2),
+    ])
+
+    heuristic2 = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.1),
+        (AverageManhattanToEachCornerHeuristic(), 0.3),
+        (AverageEuclideanToEachCornerHeuristic(), 0.4),
+        (MaxManhattanToCornerHeuristic(), 0.2),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth1, heuristic1, verbose=verbose, title='WeightedSingleCorner'),
+        MinimaxAIPlayer(problem, 2, depth2, heuristic2, verbose=verbose, title='WeightedEachCorner')
+    ]
+
+
+def build_test_subject_both_with_weighted_each_corners(problem: GameProblem, depth: int, verbose=False):
+    heuristic = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.1),
+        (AverageManhattanToEachCornerHeuristic(), 0.3),
+        (AverageEuclideanToEachCornerHeuristic(), 0.4),
+        (MaxManhattanToCornerHeuristic(), 0.2),
+    ])
+    return [
+        MinimaxAIPlayer(problem, 1, depth, heuristic, verbose=verbose, title='WeightedEachCorner'),
+        MinimaxAIPlayer(problem, 2, depth, heuristic, verbose=verbose, title='WeightedEachCorner')
+    ]
+
+
 class GameController:
     def __init__(self, verbose=True, use_graphics=True, args=None):
         self.analytics = GameAnalytics()
@@ -35,25 +131,25 @@ class GameController:
         self.handle_game_setup(args)
 
     def handle_game_setup(self, args):
-        heuristic = WeightedHeuristic([
-            (EnsuredNormalizedHeuristic(SumOfPegsInCornerHeuristic()), 0.1),
-            (EnsuredNormalizedHeuristic(AverageManhattanToCornerHeuristic()), 0.3),
-            (EnsuredNormalizedHeuristic(AverageEuclideanToCornerHeuristic()), 0.4),
-            (EnsuredNormalizedHeuristic(MaxManhattanToCornerHeuristic()), 0.2),
+        default_heuristic = WeightedHeuristic([
+            (SumOfPegsInCornerHeuristic(), 0.1),
+            (AverageManhattanToCornerHeuristic(), 0.3),
+            (AverageEuclideanToCornerHeuristic(), 0.4),
+            (MaxManhattanToCornerHeuristic(), 0.2),
         ])
 
         if args.first_player is None or args.second_player is None:
-            self.players = [
-                MinimaxAIPlayer(self.problem, 1, 2, heuristic, verbose=self.verbose),
-                MinimaxAIPlayer(self.problem, 2, 4, heuristic, verbose=self.verbose)
-            ]
+            # self.players = build_test_subject_manhattan_vs_euclidian(self.problem, 7, 7, self.verbose)
+            # self.players = build_test_subject_manhattan_vs_manhattan_each_corner(self.problem, 6, 1, self.verbose)
+            # self.players = build_test_subject_weighted_single_corner_vs_weighted_each_corners(self.problem, 9, 9, self.verbose)
+            self.players = build_test_subject_both_with_weighted_each_corners(self.problem, 7, self.verbose)
         else:
             player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
             player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
             player1 = create_player(args.first_player, depth=player1_depth, gui=self.gui,
-                                    problem=self.problem, max_player=1, heuristic=heuristic)
+                                    problem=self.problem, max_player=1, heuristic=default_heuristic)
             player2 = create_player(args.second_player, depth=player2_depth, gui=self.gui,
-                                    problem=self.problem, max_player=2, heuristic=heuristic)
+                                    problem=self.problem, max_player=2, heuristic=default_heuristic)
             self.players.append(player1)
             self.players.append(player2)
 
@@ -75,7 +171,7 @@ class GameController:
             state = self.problem.result(state, action)
 
             # Print the state and action applied once every 10 turns
-            if self.verbose or turn % 10 == 0:
+            if self.verbose:
                 print(f'Player {state.player} | applied action: {action} | turn = {turn}')
                 print(state)
                 print('\n\n')
@@ -98,6 +194,7 @@ class GameController:
         # Print the game duration and the performance metrics of the players
         self.analytics.add_game_data(game_duration, turn, self.players, winner)
         self.analytics.print_game_data()
+        self.analytics.save_to_file()
 
         # code used to plot the results
         # self.analytics.load_from_file('game_data.json')
