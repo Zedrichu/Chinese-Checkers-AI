@@ -1,7 +1,9 @@
+import math
 import time
 
 from benchmarking.GameAnalytics import GameAnalytics
 from game_problem.GameProblem import GameProblem
+from players.MonteCarloAiPlayer import MonteCarloAiPlayer
 from players.NonRepeatRandomPlayer import NonRepeatingRandomPlayer
 from game_problem.Heuristic import WeightedHeuristic, SumOfPegsInCornerHeuristic, AverageManhattanToCornerHeuristic, \
     AverageEuclideanToCornerHeuristic, MaxManhattanToCornerHeuristic, EnsuredNormalizedHeuristic, \
@@ -133,6 +135,33 @@ def build_test_subject_both_with_weighted_each_corners(problem: GameProblem, dep
     ]
 
 
+def build_test_subject_monte_carlo_with_weighted_each_corners(problem: GameProblem, depth: int, verbose: bool):
+    heuristic = WeightedHeuristic([
+        (SumOfPegsInCornerHeuristic(), 0.1),
+        (AverageManhattanToEachCornerHeuristic(), 0.3),
+        (AverageEuclideanToEachCornerHeuristic(), 0.4),
+        (MaxManhattanToCornerHeuristic(), 0.2),
+    ])
+
+    return [
+        # MinimaxAIPlayer(problem, 1, depth, heuristic, verbose=verbose, title='WeightedEachCorner'),
+        MonteCarloAiPlayer(
+            player_id=1,
+            utility_heuristic=heuristic,
+            time_limit_per_move=10,
+            exploitation_vs_exploration_rate=math.sqrt(2),
+            verbose=verbose,
+        ),
+        MonteCarloAiPlayer(
+            player_id=2,
+            utility_heuristic=heuristic,
+            time_limit_per_move=10,
+            exploitation_vs_exploration_rate=math.sqrt(2),
+            verbose=verbose,
+        )
+    ]
+
+
 class GameController:
     def __init__(self, verbose=True, use_graphics=True, args=None):
         self.analytics = GameAnalytics()
@@ -156,7 +185,8 @@ class GameController:
             # self.players = build_test_subject_euclidean_vs_manhattan(self.problem, 6, 6, self.verbose)
             # self.players = build_test_subject_manhattan_vs_manhattan_each_corner(self.problem, 5, 5, self.verbose)
             # self.players = build_test_subject_weighted_single_corner_vs_weighted_each_corners(self.problem, 6, 6, self.verbose)
-            self.players = build_test_subject_both_with_weighted_each_corners(self.problem, 6, self.verbose)
+            # self.players = build_test_subject_both_with_weighted_each_corners(self.problem, 6, self.verbose)
+            self.players = build_test_subject_monte_carlo_with_weighted_each_corners(self.problem, 6, self.verbose)
         else:
             player1_depth = args.first_minimax_depth if args.first_player == 'minimax' else None
             player2_depth = args.second_minimax_depth if args.second_player == 'minimax' else None
