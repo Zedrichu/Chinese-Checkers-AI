@@ -1,4 +1,4 @@
-# Chinese Checkers Game
+# Chinese Checkers Game AI
 
 This project implements a Chinese Checkers game that can be played in various modes, including against different types of AI players and a human player via a graphical user interface (GUI). The game supports command-line arguments to specify the player types and, for AI players using the Minimax algorithm, the depth of the search.
 
@@ -41,5 +41,8 @@ Start a game between a Minimax AI player with a default depth of 6 and a standar
 ```bash
 python main.py --first-player minimax --second-player random
 ```
+
+#### Project Completed in Course 02180 Introduction to Artificial Intelligence - Technical University of Denmark 
+<img src="https://user-images.githubusercontent.com/65953954/120001846-7f05f180-bfd4-11eb-8c11-2379a547dc9f.jpg" alt="drawing" width="100"/>
 
 
